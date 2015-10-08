@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @JsonInclude(Include.NON_NULL)
 public class XApiObjectDefinition {
@@ -40,56 +40,70 @@ public class XApiObjectDefinition {
 	private List<XApiInteractionComponent> target;
 	private List<XApiInteractionComponent> steps;
 	private Map<URI, Object> extensions;
-	
+
 	/**
 	 * @return the name
 	 */
 	public Map<String, String> getName() {
 		return name;
 	}
+
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(Map<String, String> name) {
 		this.name = name;
 	}
+
 	/**
 	 * @return the description
 	 */
 	public Map<String, String> getDescription() {
 		return description;
 	}
+
 	/**
-	 * @param description the description to set
+	 * @param description
+	 *            the description to set
 	 */
 	public void setDescription(Map<String, String> description) {
 		this.description = description;
 	}
+
 	/**
 	 * @return the type
 	 */
 	public String getType() {
 		return type;
 	}
+
 	/**
-	 * @param type the type to set
+	 * @param type
+	 *            the type to set
 	 */
 	public void setType(String type) {
 		this.type = type;
 	}
+
 	/**
 	 * @return the moreInfo
 	 */
 	public String getMoreInfo() {
 		return moreInfo;
 	}
+
 	/**
-	 * @param moreInfo the moreInfo to set
+	 * @param moreInfo
+	 *            the moreInfo to set
 	 */
 	public void setMoreInfo(String moreInfo) {
 		this.moreInfo = moreInfo;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -98,101 +112,125 @@ public class XApiObjectDefinition {
 				+ description + ", type=" + type + ", moreInfo=" + moreInfo
 				+ "]";
 	}
+
 	/**
 	 * @return the interactionType
 	 */
 	public String getInteractionType() {
 		return interactionType;
 	}
+
 	/**
-	 * @param interactionType the interactionType to set
+	 * @param interactionType
+	 *            the interactionType to set
 	 */
 	public void setInteractionType(String interactionType) {
 		this.interactionType = interactionType;
 	}
+
 	/**
 	 * @return the correctResponsesPattern
 	 */
 	public List<String> getCorrectResponsesPattern() {
 		return correctResponsesPattern;
 	}
+
 	/**
-	 * @param correctResponsesPattern the correctResponsesPattern to set
+	 * @param correctResponsesPattern
+	 *            the correctResponsesPattern to set
 	 */
 	public void setCorrectResponsesPattern(List<String> correctResponsesPattern) {
 		this.correctResponsesPattern = correctResponsesPattern;
 	}
+
 	/**
 	 * @return the choices
 	 */
 	public List<XApiInteractionComponent> getChoices() {
 		return choices;
 	}
+
 	/**
-	 * @param choices the choices to set
+	 * @param choices
+	 *            the choices to set
 	 */
 	public void setChoices(List<XApiInteractionComponent> choices) {
 		this.choices = choices;
 	}
+
 	/**
 	 * @return the scale
 	 */
 	public List<XApiInteractionComponent> getScale() {
 		return scale;
 	}
+
 	/**
-	 * @param scale the scale to set
+	 * @param scale
+	 *            the scale to set
 	 */
 	public void setScale(List<XApiInteractionComponent> scale) {
 		this.scale = scale;
 	}
+
 	/**
 	 * @return the source
 	 */
 	public List<XApiInteractionComponent> getSource() {
 		return source;
 	}
+
 	/**
-	 * @param source the source to set
+	 * @param source
+	 *            the source to set
 	 */
 	public void setSource(List<XApiInteractionComponent> source) {
 		this.source = source;
 	}
+
 	/**
 	 * @return the target
 	 */
 	public List<XApiInteractionComponent> getTarget() {
 		return target;
 	}
+
 	/**
-	 * @param target the target to set
+	 * @param target
+	 *            the target to set
 	 */
 	public void setTarget(List<XApiInteractionComponent> target) {
 		this.target = target;
 	}
+
 	/**
 	 * @return the steps
 	 */
 	public List<XApiInteractionComponent> getSteps() {
 		return steps;
 	}
+
 	/**
-	 * @param steps the steps to set
+	 * @param steps
+	 *            the steps to set
 	 */
 	public void setSteps(List<XApiInteractionComponent> steps) {
 		this.steps = steps;
 	}
+
 	/**
 	 * @return the extensions
 	 */
 	public Map<URI, Object> getExtensions() {
 		return extensions;
 	}
+
 	/**
-	 * @param extensions the extensions to set
+	 * @param extensions
+	 *            the extensions to set
 	 */
 	public void setExtensions(Map<URI, Object> extensions) {
 		this.extensions = extensions;
 	}
-	
+
 }

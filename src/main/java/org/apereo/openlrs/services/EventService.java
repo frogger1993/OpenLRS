@@ -23,27 +23,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 public abstract class EventService {
-	
-	@Autowired protected StorageFactory storageFactory;	
+
+	@Autowired
+	protected StorageFactory storageFactory;
 	private TierOneStorage<OpenLRSEntity> tierOneStorage;
 	private TierTwoStorage<OpenLRSEntity> tierTwoStorage;
-	
+
 	protected TierOneStorage<OpenLRSEntity> getTierOneStorage() {
 		if (tierOneStorage == null) {
 			tierOneStorage = storageFactory.getTierOneStorage();
 		}
 		return tierOneStorage;
 	}
-	
+
 	protected TierTwoStorage<OpenLRSEntity> getTierTwoStorage() {
 		if (tierTwoStorage == null) {
 			tierTwoStorage = storageFactory.getTierTwoStorage();
 		}
 		return tierTwoStorage;
 	}
-
 
 }

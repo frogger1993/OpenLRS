@@ -30,24 +30,25 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
-
 /**
  * @author ggilbert
- *
+ * 
  */
 public class OAuthUtils {
 	private static Logger log = Logger.getLogger(OAuthUtils.class);
-	
-	private static final Pattern AUTHORIZATION_PATTERN = Pattern.compile("\\s*(\\w*)\\s+(.*)");
-	private static final Pattern KEYVALUEPAIR_PATTERN = Pattern.compile("(\\S*)\\s*\\=\\s*\"([^\"]*)\"");
-	
+
+	private static final Pattern AUTHORIZATION_PATTERN = Pattern
+			.compile("\\s*(\\w*)\\s+(.*)");
+	private static final Pattern KEYVALUEPAIR_PATTERN = Pattern
+			.compile("(\\S*)\\s*\\=\\s*\"([^\"]*)\"");
+
 	private static final Map<String, String> algorithms;
-	
+
 	static {
 		algorithms = new HashMap<String, String>();
 		algorithms.put("HMAC-SHA1", "HmacSHA1");
 	}
-	
+
 	public static Map<String, String> decodeAuthorization(String authorization) {
 		Map<String, String> oauthParameters = new HashMap<String, String>();
 		if (authorization != null) {
@@ -65,83 +66,86 @@ public class OAuthUtils {
 				}
 			}
 		}
-		
+
 		return oauthParameters;
 	}
-	
-	public static String sign(String secret, Map<String, String> oauthParameters, String algorithm, String method,
-			String url) {
-		
-		StringBuilder signatureBase = new StringBuilder(OAuthUtils.percentEncode(method));
+
+	public static String sign(String secret,
+			Map<String, String> oauthParameters, String algorithm,
+			String method, String url) {
+
+		StringBuilder signatureBase = new StringBuilder(
+				OAuthUtils.percentEncode(method));
 		signatureBase.append("&");
 		signatureBase.append(OAuthUtils.percentEncode(url));
 		signatureBase.append("&");
-		
-		Map<String, String> treeMap = new TreeMap<String, String>(oauthParameters);
+
+		Map<String, String> treeMap = new TreeMap<String, String>(
+				oauthParameters);
 		treeMap.remove("oauth_signature");
 		treeMap.remove("realm");
-		
+
 		boolean first = true;
 		for (Map.Entry<String, String> entry : treeMap.entrySet()) {
 			if (!first)
 				signatureBase.append(OAuthUtils.percentEncode("&"));
 			else
 				first = false;
-			
-			signatureBase.append(OAuthUtils.percentEncode(entry.getKey()+"="+entry.getValue()));
+
+			signatureBase.append(OAuthUtils.percentEncode(entry.getKey() + "="
+					+ entry.getValue()));
 		}
-		
+
 		Mac mac = null;
 		try {
 			SecretKeySpec secretKeySpec = new SecretKeySpec(
-					(OAuthUtils.percentEncode(secret) + "&").getBytes(), algorithm);
-					
+					(OAuthUtils.percentEncode(secret) + "&").getBytes(),
+					algorithm);
+
 			mac = Mac.getInstance(secretKeySpec.getAlgorithm());
-			mac.init(secretKeySpec);		
-			
-		} 
-		catch (Exception e) {
+			mac.init(secretKeySpec);
+
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug("signatureBaseString: " + signatureBase.toString());
 		}
-		
+
 		byte[] bytes = mac.doFinal(signatureBase.toString().getBytes());
 		byte[] encodedMacBytes = Base64.encodeBase64(bytes);
 
 		return new String(encodedMacBytes);
 	}
-	
+
 	public static final String mapToJava(String name) {
 		String algorithm = algorithms.get(name);
 		if (algorithm == null) {
-			throw new UnsupportedOperationException("Signature algorithm of " + name + " is unsupported.");
+			throw new UnsupportedOperationException("Signature algorithm of "
+					+ name + " is unsupported.");
 		}
-		return algorithm;		
+		return algorithm;
 	}
 
 	private static String percentEncode(String s) {
-        if (s == null) {
-            return "";
-        }
-        try {
-            return URLEncoder.encode(s, "UTF-8")
-                    .replace("+", "%20").replace("*", "%2A")
-                    .replace("%7E", "~");
-        } catch (UnsupportedEncodingException uee) {
-            throw new RuntimeException(uee.getMessage(), uee);
-        }
+		if (s == null) {
+			return "";
+		}
+		try {
+			return URLEncoder.encode(s, "UTF-8").replace("+", "%20")
+					.replace("*", "%2A").replace("%7E", "~");
+		} catch (UnsupportedEncodingException uee) {
+			throw new RuntimeException(uee.getMessage(), uee);
+		}
 	}
-	
-    private static String decodePercent(String s) {
-    	try {
-    		return URLDecoder.decode(s, "UTF-8");
-    	} 
-    	catch (java.io.UnsupportedEncodingException e) {
-    		throw new RuntimeException(e.getMessage(), e);
-    	}
-    }
+
+	private static String decodePercent(String s) {
+		try {
+			return URLDecoder.decode(s, "UTF-8");
+		} catch (java.io.UnsupportedEncodingException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
 
 }

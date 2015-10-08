@@ -3,9 +3,10 @@
  */
 package org.apereo.openlrs.exceptions.xapi;
 
-
 /**
- * Exception indicating that a received XAPI request cannot be fulfilled due to a conflict with the state of the target statement.
+ * Exception indicating that a received XAPI request cannot be fulfilled due to
+ * a conflict with the state of the target statement.
+ * 
  * @author Gary Roybal, groybal@unicon.net
  */
 public class StatementStateConflictException extends RuntimeException {
@@ -27,7 +28,8 @@ public class StatementStateConflictException extends RuntimeException {
 		super(message, cause);
 	}
 
-	public StatementStateConflictException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public StatementStateConflictException(String message, Throwable cause,
+			boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 

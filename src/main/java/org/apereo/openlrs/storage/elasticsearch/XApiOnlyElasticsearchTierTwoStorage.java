@@ -73,28 +73,33 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Component("XApiOnlyElasticsearchTierTwoStorage")
 @Profile("elasticsearch")
-public class XApiOnlyElasticsearchTierTwoStorage implements TierTwoStorage<OpenLRSEntity> {
-	
-	private Logger log = LoggerFactory.getLogger(XApiOnlyElasticsearchTierTwoStorage.class);
-	
+public class XApiOnlyElasticsearchTierTwoStorage implements
+		TierTwoStorage<OpenLRSEntity> {
+
+	private Logger log = LoggerFactory
+			.getLogger(XApiOnlyElasticsearchTierTwoStorage.class);
+
 	@Value("${es.bulkIndexSize:100}")
 	private int bulkIndexSize;
-	
+
 	@Value("${es.bulkIndexScheduleRateSecond:1}")
 	private int bulkIndexScheduleRateSecond;
-	
-	@Autowired private ElasticSearchStatementSpringDataRepository esSpringDataRepository;
-	@Autowired private ElasticSearchStatementMetadataSDRepository esStatementMetadataRepository;
-	@Autowired private ObjectMapper objectMapper;
-	
+
+	@Autowired
+	private ElasticSearchStatementSpringDataRepository esSpringDataRepository;
+	@Autowired
+	private ElasticSearchStatementMetadataSDRepository esStatementMetadataRepository;
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	private ScheduledExecutorService executorService = null;
 	private LinkedBlockingQueue<Statement> statementQueue = new LinkedBlockingQueue<Statement>();
 	private Runnable task = new Runnable() {
-		
+
 		@Override
 		public void run() {
 			int size = statementQueue.size();
@@ -113,68 +118,71 @@ public class XApiOnlyElasticsearchTierTwoStorage implements TierTwoStorage<OpenL
 				}
 
 				if (!statementsToIndex.isEmpty()) {
-					log.debug("Indexing records: "+statementsToIndex.size());
+					log.debug("Indexing records: " + statementsToIndex.size());
 					try {
 						esSpringDataRepository.save(statementsToIndex);
 						esStatementMetadataRepository.save(metadataToIndex);
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						log.error("Unable to index statements");
-						//TODO
+						// TODO
 					}
 				}
 			}
 		}
 	};
-	
+
 	@Override
 	public OpenLRSEntity findById(String id) {
 		return esSpringDataRepository.findOne(id);
 	}
-	
+
 	@Override
 	public OpenLRSEntity save(OpenLRSEntity entity) {
-		
-		if (entity != null && Statement.OBJECT_KEY.equals(entity.getObjectKey())) {
+
+		if (entity != null
+				&& Statement.OBJECT_KEY.equals(entity.getObjectKey())) {
 			try {
 				if (log.isDebugEnabled()) {
-					log.debug("statement to index: {}",entity);
+					log.debug("statement to index: {}", entity);
 				}
-				statementQueue.add((Statement)entity);
-				
+				statementQueue.add((Statement) entity);
+
 				if (executorService == null) {
-					log.debug("Init executorService with rate "+bulkIndexScheduleRateSecond);
-					executorService = Executors.newSingleThreadScheduledExecutor();
-					executorService.scheduleAtFixedRate(task, 0, bulkIndexScheduleRateSecond, TimeUnit.SECONDS);
+					log.debug("Init executorService with rate "
+							+ bulkIndexScheduleRateSecond);
+					executorService = Executors
+							.newSingleThreadScheduledExecutor();
+					executorService.scheduleAtFixedRate(task, 0,
+							bulkIndexScheduleRateSecond, TimeUnit.SECONDS);
 				}
-			} 
-			catch (Exception e) {
-				log.error(e.getMessage(),e);
-				//TODO - what else?
-			} 
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+				// TODO - what else?
+			}
+		} else if (entity != null) {
+			log.warn("XApiOnlyElasticsearchTierTwoStorage does not support "
+					+ entity.getObjectKey());
 		}
-		else if (entity != null) {
-			log.warn("XApiOnlyElasticsearchTierTwoStorage does not support "+entity.getObjectKey());
-		}
-		
+
 		return entity;
 	}
-	
+
 	@Override
 	public List<OpenLRSEntity> saveAll(Collection<OpenLRSEntity> entities) {
-		
+
 		if (entities != null && !entities.isEmpty()) {
 			for (OpenLRSEntity entity : entities) {
 				save(entity);
 			}
 		}
-		
+
 		return new ArrayList<OpenLRSEntity>(entities);
 	}
-	
+
 	@Override
 	public List<OpenLRSEntity> findAll() {
-		Iterable<Statement> iterableStatements = esSpringDataRepository.findAll();
+		Iterable<Statement> iterableStatements = esSpringDataRepository
+				.findAll();
 		if (iterableStatements != null) {
 			return IteratorUtils.toList(iterableStatements.iterator());
 		}
@@ -187,16 +195,17 @@ public class XApiOnlyElasticsearchTierTwoStorage implements TierTwoStorage<OpenL
 		if (page != null) {
 			return page.getContent();
 		}
-		
+
 		return null;
 	}
 
-
 	@Override
 	public Page<OpenLRSEntity> findAll(Pageable pageable) {
-		Iterable<Statement> iterableStatements = esSpringDataRepository.findAll();
+		Iterable<Statement> iterableStatements = esSpringDataRepository
+				.findAll();
 		if (iterableStatements != null) {
-			return new PageImpl<OpenLRSEntity>(IteratorUtils.toList(iterableStatements.iterator()));
+			return new PageImpl<OpenLRSEntity>(
+					IteratorUtils.toList(iterableStatements.iterator()));
 		}
 		return null;
 	}
@@ -208,182 +217,188 @@ public class XApiOnlyElasticsearchTierTwoStorage implements TierTwoStorage<OpenL
 		String activity = filters.get(StatementUtils.ACTIVITY_FILTER);
 		String since = filters.get(StatementUtils.SINCE_FILTER);
 		String until = filters.get(StatementUtils.UNTIL_FILTER);
-		int limit = getLimit(filters.get(StatementUtils.LIMIT_FILTER));;
-		
+		int limit = getLimit(filters.get(StatementUtils.LIMIT_FILTER));
+		;
+
 		XApiActor xApiActor = null;
-		
+
 		if (StringUtils.isNotBlank(actor)) {
 			ObjectMapper objectMapper = new ObjectMapper();
 			try {
-				xApiActor = objectMapper.readValue(actor.getBytes(), XApiActor.class);
-			} 
-			catch (Exception e) {
-				log.error(e.getMessage(),e);
-			} 
+				xApiActor = objectMapper.readValue(actor.getBytes(),
+						XApiActor.class);
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+			}
 		}
 
 		SearchQuery searchQuery = null;
-		
+
 		if (StringUtils.isNotBlank(activity) && xApiActor != null) {
 			QueryBuilder actorQuery = buildActorQuery(xApiActor);
-			QueryBuilder activityQuery = nestedQuery("object",boolQuery().must(matchQuery("object.id", activity)));
-			
-			BoolQueryBuilder boolQuery = boolQuery().must(actorQuery).must(activityQuery);
-			
+			QueryBuilder activityQuery = nestedQuery("object", boolQuery()
+					.must(matchQuery("object.id", activity)));
+
+			BoolQueryBuilder boolQuery = boolQuery().must(actorQuery).must(
+					activityQuery);
+
 			searchQuery = startQuery(limit, boolQuery).build();
-		}
-		else if (xApiActor != null) {
-			
+		} else if (xApiActor != null) {
+
 			QueryBuilder query = buildActorQuery(xApiActor);
-			
+
 			if (query != null) {
 				searchQuery = startQuery(limit, query).build();
 			}
-		}
-		else if (StringUtils.isNotBlank(activity)) {	
-			QueryBuilder query = nestedQuery("object",boolQuery().must(matchQuery("object.id", activity)));
+		} else if (StringUtils.isNotBlank(activity)) {
+			QueryBuilder query = nestedQuery("object",
+					boolQuery().must(matchQuery("object.id", activity)));
 			searchQuery = startQuery(limit, query).build();
-		}
-		else if (StringUtils.isNotBlank(since) || StringUtils.isNotBlank(until)) {
+		} else if (StringUtils.isNotBlank(since)
+				|| StringUtils.isNotBlank(until)) {
 			QueryBuilder query = null;
-			
-			if(StringUtils.isNotBlank(since) && StringUtils.isNotBlank(until))
-			{
+
+			if (StringUtils.isNotBlank(since) && StringUtils.isNotBlank(until)) {
 				query = new RangeQueryBuilder("stored").from(since).to(until);
-			}
-			else
-			{
-				if(StringUtils.isNotBlank(since))
-				{
-					query = new RangeQueryBuilder("stored").from(since).to("now");
+			} else {
+				if (StringUtils.isNotBlank(since)) {
+					query = new RangeQueryBuilder("stored").from(since).to(
+							"now");
 				}
-				
-				if(StringUtils.isNotBlank(until))
-				{
+
+				if (StringUtils.isNotBlank(until)) {
 					try {
-						
-						DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+						DateFormat formatter = new SimpleDateFormat(
+								"yyyy-MM-dd'T'HH:mm:ss'Z'");
 						TimeZone tz = TimeZone.getTimeZone("UTC");
-						formatter.setTimeZone( tz );
-						Date date = (Date)formatter.parse(until);
-						Calendar calendar = Calendar.getInstance();  
-						calendar.setTime(date); 
-						calendar.add(Calendar.YEAR,-1);  
-						
-						query = new RangeQueryBuilder("stored").from(formatter.format(calendar.getTime())).to(until);
+						formatter.setTimeZone(tz);
+						Date date = (Date) formatter.parse(until);
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(date);
+						calendar.add(Calendar.YEAR, -1);
+
+						query = new RangeQueryBuilder("stored").from(
+								formatter.format(calendar.getTime())).to(until);
 					} catch (ParseException e) {
-						log.error(e.getMessage(),e);
+						log.error(e.getMessage(), e);
 						return null;
 					}
 				}
 			}
-			
-			NativeSearchQueryBuilder searchQueryBuilder = startQuery(limit, query);
-		
-			searchQuery = searchQueryBuilder.withSort(new FieldSortBuilder("stored").order(SortOrder.DESC)).build();
+
+			NativeSearchQueryBuilder searchQueryBuilder = startQuery(limit,
+					query);
+
+			searchQuery = searchQueryBuilder.withSort(
+					new FieldSortBuilder("stored").order(SortOrder.DESC))
+					.build();
+		} else if (limit > 0) {
+			searchQuery = startQuery(limit, null).build();
 		}
-		else if(limit > 0) {
-			searchQuery  = startQuery(limit, null).build();
-		}
-		
+
 		if (searchQuery != null) {
-			if (log.isDebugEnabled()) 
-			{
-				if(searchQuery.getQuery() != null)
-				{
-					log.debug(String.format("Elasticsearch query %s", searchQuery.getQuery().toString()));
+			if (log.isDebugEnabled()) {
+				if (searchQuery.getQuery() != null) {
+					log.debug(String.format("Elasticsearch query %s",
+							searchQuery.getQuery().toString()));
 				}
 			}
-			
-			Iterable<Statement> iterableStatements = esSpringDataRepository.search(searchQuery);
+
+			Iterable<Statement> iterableStatements = esSpringDataRepository
+					.search(searchQuery);
 			if (iterableStatements != null) {
-				return new PageImpl<OpenLRSEntity>(IteratorUtils.toList(iterableStatements.iterator()));
+				return new PageImpl<OpenLRSEntity>(
+						IteratorUtils.toList(iterableStatements.iterator()));
 			}
 		}
 		return null;
 	}
-	
+
 	private NativeSearchQueryBuilder startQuery(int limit, QueryBuilder query) {
 		NativeSearchQueryBuilder searchQueryBuilder = new NativeSearchQueryBuilder();
 
-		if(query != null)
-		{
+		if (query != null) {
 			searchQueryBuilder = searchQueryBuilder.withQuery(query);
 		}
-		
-		searchQueryBuilder = searchQueryBuilder.withPageable(new PageRequest(0, limit > 0 ? limit : 500));
-		
+
+		searchQueryBuilder = searchQueryBuilder.withPageable(new PageRequest(0,
+				limit > 0 ? limit : 500));
+
 		return searchQueryBuilder;
 	}
 
 	private int getLimit(String limit) {
-		
-		if(StringUtils.isNotBlank(limit))
-		{
-			try{
-    		  return Integer.parseInt(limit);
-    		} catch (NumberFormatException e) {
-    			log.debug("Limit not a number");
-    		}
+
+		if (StringUtils.isNotBlank(limit)) {
+			try {
+				return Integer.parseInt(limit);
+			} catch (NumberFormatException e) {
+				log.debug("Limit not a number");
+			}
 		}
-		
+
 		return 0;
 	}
 
 	private QueryBuilder buildActorQuery(XApiActor xApiActor) {
 		List<QueryBuilder> queryBuilders = new ArrayList<QueryBuilder>();
-		
+
 		XApiActorTypes actorType = xApiActor.getObjectType();
 		if (actorType != null) {
-			MatchQueryBuilder actorTypeQuery = matchQuery("actor.objectType", actorType);
+			MatchQueryBuilder actorTypeQuery = matchQuery("actor.objectType",
+					actorType);
 			queryBuilders.add(actorTypeQuery);
 		}
-		
+
 		String mbox = xApiActor.getMbox();
 		if (StringUtils.isNotBlank(mbox)) {
 			if (log.isDebugEnabled()) {
-				log.debug(String.format("mbox: %s",mbox));
+				log.debug(String.format("mbox: %s", mbox));
 			}
 			MatchQueryBuilder mboxQuery = matchQuery("actor.mbox", mbox);
 			queryBuilders.add(mboxQuery);
 		}
-		
+
 		String mbox_sha1sum = xApiActor.getMbox_sha1sum();
 		if (StringUtils.isNotBlank(mbox_sha1sum)) {
 			if (log.isDebugEnabled()) {
-				log.debug(String.format("mbox_sha1sum: %s",mbox_sha1sum));
+				log.debug(String.format("mbox_sha1sum: %s", mbox_sha1sum));
 			}
-			MatchQueryBuilder mbox_sha1sumQuery = matchQuery("actor.mbox_sha1sum", mbox_sha1sum);
+			MatchQueryBuilder mbox_sha1sumQuery = matchQuery(
+					"actor.mbox_sha1sum", mbox_sha1sum);
 			queryBuilders.add(mbox_sha1sumQuery);
 		}
 
 		String openid = xApiActor.getOpenid();
 		if (StringUtils.isNotBlank(openid)) {
 			if (log.isDebugEnabled()) {
-				log.debug(String.format("openid: %s",openid));
+				log.debug(String.format("openid: %s", openid));
 			}
 			MatchQueryBuilder openidQuery = matchQuery("actor.openid", openid);
 			queryBuilders.add(openidQuery);
 		}
-		
+
 		XApiAccount account = xApiActor.getAccount();
 		if (account != null) {
-			
+
 			String name = account.getName();
 			String homepage = account.getHomePage();
-			
+
 			if (StringUtils.isNotBlank(name)) {
-				MatchQueryBuilder acctNameQuery = matchQuery("actor.account.name", name);
+				MatchQueryBuilder acctNameQuery = matchQuery(
+						"actor.account.name", name);
 				queryBuilders.add(acctNameQuery);
 			}
-			
+
 			if (StringUtils.isNotBlank(homepage)) {
-				MatchQueryBuilder acctHomepageQuery = matchQuery("actor.account.homePage", homepage);
+				MatchQueryBuilder acctHomepageQuery = matchQuery(
+						"actor.account.homePage", homepage);
 				queryBuilders.add(acctHomepageQuery);
 			}
 
 		}
-		
+
 		if (!queryBuilders.isEmpty()) {
 			BoolQueryBuilder boolQuery = boolQuery();
 			for (QueryBuilder qb : queryBuilders) {
@@ -398,38 +413,44 @@ public class XApiOnlyElasticsearchTierTwoStorage implements TierTwoStorage<OpenL
 		StatementMetadata statementMetadata = new StatementMetadata();
 		statementMetadata.setId(UUID.randomUUID().toString());
 		statementMetadata.setStatementId(statement.getId());
-		
+
 		XApiContext xApiContext = statement.getContext();
 		if (xApiContext != null) {
-			XApiContextActivities xApiContextActivities = xApiContext.getContextActivities();
+			XApiContextActivities xApiContextActivities = xApiContext
+					.getContextActivities();
 			if (xApiContextActivities != null) {
-				List<XApiObject> parentContext = xApiContextActivities.getParent();
+				List<XApiObject> parentContext = xApiContextActivities
+						.getParent();
 				if (parentContext != null && !parentContext.isEmpty()) {
 					for (XApiObject object : parentContext) {
 						String id = object.getId();
 						if (StringUtils.contains(id, "portal/site/")) {
-							statementMetadata.setContext(StringUtils.substringAfterLast(id, "/"));
+							statementMetadata.setContext(StringUtils
+									.substringAfterLast(id, "/"));
 						}
 					}
 				}
 			}
 		}
-		
+
 		XApiActor xApiActor = statement.getActor();
 		if (xApiActor != null) {
 			String mbox = xApiActor.getMbox();
 			if (StringUtils.isNotBlank(mbox)) {
-				statementMetadata.setUser(StringUtils.substringBetween(mbox, "mailto:", "@"));
+				statementMetadata.setUser(StringUtils.substringBetween(mbox,
+						"mailto:", "@"));
 			}
 		}
-		
+
 		return statementMetadata;
 	}
 
 	@Override
 	public Page<OpenLRSEntity> findByContext(String context, Pageable pageable) {
-		Page<StatementMetadata> metadata = esStatementMetadataRepository.findByContext(context, pageable);
-		if (metadata != null && metadata.getContent() != null && !metadata.getContent().isEmpty()) {
+		Page<StatementMetadata> metadata = esStatementMetadataRepository
+				.findByContext(context, pageable);
+		if (metadata != null && metadata.getContent() != null
+				&& !metadata.getContent().isEmpty()) {
 			return map(metadata.getContent());
 		}
 		return null;
@@ -437,8 +458,10 @@ public class XApiOnlyElasticsearchTierTwoStorage implements TierTwoStorage<OpenL
 
 	@Override
 	public Page<OpenLRSEntity> findByUser(String user, Pageable pageable) {
-		Page<StatementMetadata> metadata = esStatementMetadataRepository.findByUser(user, pageable);
-		if (metadata != null && metadata.getContent() != null && !metadata.getContent().isEmpty()) {
+		Page<StatementMetadata> metadata = esStatementMetadataRepository
+				.findByUser(user, pageable);
+		if (metadata != null && metadata.getContent() != null
+				&& !metadata.getContent().isEmpty()) {
 			return map(metadata.getContent());
 		}
 		return null;
@@ -447,23 +470,26 @@ public class XApiOnlyElasticsearchTierTwoStorage implements TierTwoStorage<OpenL
 	@Override
 	public Page<OpenLRSEntity> findByContextAndUser(String context,
 			String user, Pageable pageable) {
-		Page<StatementMetadata> metadata = esStatementMetadataRepository.findByUserAndContext(user,context,pageable);
-		if (metadata != null && metadata.getContent() != null && !metadata.getContent().isEmpty()) {
+		Page<StatementMetadata> metadata = esStatementMetadataRepository
+				.findByUserAndContext(user, context, pageable);
+		if (metadata != null && metadata.getContent() != null
+				&& !metadata.getContent().isEmpty()) {
 			return map(metadata.getContent());
 		}
 		return null;
 	}
-	
+
 	private Page<OpenLRSEntity> map(List<StatementMetadata> metadata) {
 		List<String> ids = new ArrayList<String>();
-		for (StatementMetadata sm: metadata) {
+		for (StatementMetadata sm : metadata) {
 			ids.add(sm.getStatementId());
 		}
-		
+
 		if (log.isDebugEnabled()) {
-			log.debug("statement ids: "+ids);
+			log.debug("statement ids: " + ids);
 		}
-		
-		return (Page<OpenLRSEntity>)(Page<?>)esSpringDataRepository.findByIdInOrderByTimestampDesc(ids, new PageRequest(0, 1000));
+
+		return (Page<OpenLRSEntity>) (Page<?>) esSpringDataRepository
+				.findByIdInOrderByTimestampDesc(ids, new PageRequest(0, 1000));
 	}
 }

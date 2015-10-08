@@ -23,20 +23,20 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Service
-@Profile({"redis","mongo"})
+@Profile({ "redis", "mongo" })
 public class CaliperService extends EventService {
 
 	private Logger log = Logger.getLogger(CaliperService.class);
-	
+
 	public void post(String organizationId, CaliperEvent caliperEvent) {
-    	if (log.isDebugEnabled()) {
-    		log.debug(String.format("Caliper event: %s",caliperEvent));
-    	}
-    	
-        getTierOneStorage().save(caliperEvent);
+		if (log.isDebugEnabled()) {
+			log.debug(String.format("Caliper event: %s", caliperEvent));
+		}
+
+		getTierOneStorage().save(caliperEvent);
 	}
-	
+
 }

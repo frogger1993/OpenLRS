@@ -22,32 +22,40 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @JsonInclude(Include.NON_NULL)
 public class XApiStatementRef {
-	@NotNull private XApiObjectTypes objectType = XApiObjectTypes.StatementRef;
-	@NotNull private String id;
+	@NotNull
+	private XApiObjectTypes objectType = XApiObjectTypes.StatementRef;
+	@NotNull
+	private String id;
+
 	/**
 	 * @return the objectType
 	 */
 	public XApiObjectTypes getObjectType() {
 		return objectType;
 	}
+
 	/**
-	 * @param objectType the objectType to set
+	 * @param objectType
+	 *            the objectType to set
 	 */
 	public void setObjectType(XApiObjectTypes objectType) {
 		this.objectType = objectType;
 	}
+
 	/**
 	 * @return the id
 	 */
 	public String getId() {
 		return id;
 	}
+
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(String id) {
 		this.id = id;

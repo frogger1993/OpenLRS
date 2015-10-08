@@ -22,59 +22,71 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @JsonInclude(Include.NON_NULL)
 public class XApiContextActivities {
-	
+
 	private List<XApiObject> parent;
 	private List<XApiObject> grouping;
 	private List<XApiObject> category;
 	private List<XApiObject> other;
+
 	/**
 	 * @return the parent
 	 */
 	public List<XApiObject> getParent() {
 		return parent;
 	}
+
 	/**
-	 * @param parent the parent to set
+	 * @param parent
+	 *            the parent to set
 	 */
 	public void setParent(List<XApiObject> parent) {
 		this.parent = parent;
 	}
+
 	/**
 	 * @return the grouping
 	 */
 	public List<XApiObject> getGrouping() {
 		return grouping;
 	}
+
 	/**
-	 * @param grouping the grouping to set
+	 * @param grouping
+	 *            the grouping to set
 	 */
 	public void setGrouping(List<XApiObject> grouping) {
 		this.grouping = grouping;
 	}
+
 	/**
 	 * @return the category
 	 */
 	public List<XApiObject> getCategory() {
 		return category;
 	}
+
 	/**
-	 * @param category the category to set
+	 * @param category
+	 *            the category to set
 	 */
 	public void setCategory(List<XApiObject> category) {
 		this.category = category;
 	}
+
 	/**
 	 * @return the other
 	 */
 	public List<XApiObject> getOther() {
 		return other;
 	}
+
 	/**
-	 * @param other the other to set
+	 * @param other
+	 *            the other to set
 	 */
 	public void setOther(List<XApiObject> other) {
 		this.other = other;

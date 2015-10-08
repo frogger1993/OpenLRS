@@ -24,33 +24,39 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @JsonInclude(Include.NON_NULL)
 public class XApiInteractionComponent {
-	@NotNull private String id;
+	@NotNull
+	private String id;
 	private Map<String, String> description;
-	
+
 	/**
 	 * @return the id
 	 */
 	public String getId() {
 		return id;
 	}
+
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(String id) {
 		this.id = id;
 	}
+
 	/**
 	 * @return the description
 	 */
 	public Map<String, String> getDescription() {
 		return description;
 	}
+
 	/**
-	 * @param description the description to set
+	 * @param description
+	 *            the description to set
 	 */
 	public void setDescription(Map<String, String> description) {
 		this.description = description;

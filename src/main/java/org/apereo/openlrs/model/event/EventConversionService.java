@@ -42,145 +42,149 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Service
 public class EventConversionService {
 	private Logger log = Logger.getLogger(EventConversionService.class);
-	@Autowired private ObjectMapper objectMapper;
-	
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	public boolean isEvent(OpenLRSEntity entity) {
 		return Event.OBJECT_KEY.equals(entity.getObjectKey());
 	}
-	
+
 	public boolean isXApi(OpenLRSEntity entity) {
 		return Statement.OBJECT_KEY.equals(entity.getObjectKey());
 	}
-	
+
 	public Event toEvent(OpenLRSEntity entity) {
 		Event event = null;
 		if (isEvent(entity)) {
-			event = (Event)event;
-		}
-		else if (isXApi(entity)) {
-			Statement statement = (Statement)entity;
+			event = (Event) event;
+		} else if (isXApi(entity)) {
+			Statement statement = (Statement) entity;
 			event = fromXAPI(statement);
-		}
-		else {
-			throw new UnsupportedOperationException(String.format("Conversion from %s to event is not yet supported.", entity.getObjectKey()));
+		} else {
+			throw new UnsupportedOperationException(String.format(
+					"Conversion from %s to event is not yet supported.",
+					entity.getObjectKey()));
 		}
 
 		return event;
 	}
-	
+
 	public Page<Event> toEventPage(Page<OpenLRSEntity> page) {
 		Page<Event> events = null;
-    	if (page != null && page.getContent() != null && !page.getContent().isEmpty()) {
-    		List<OpenLRSEntity> entities = page.getContent();
-    		List<Event> eventList = new ArrayList<Event>();
-    		for (OpenLRSEntity entity : entities) {
-    			eventList.add(toEvent(entity));
-    		}
-    		
-    		events = new PageImpl<Event>(eventList);
-    	}
-    	
-    	return events;
+		if (page != null && page.getContent() != null
+				&& !page.getContent().isEmpty()) {
+			List<OpenLRSEntity> entities = page.getContent();
+			List<Event> eventList = new ArrayList<Event>();
+			for (OpenLRSEntity entity : entities) {
+				eventList.add(toEvent(entity));
+			}
+
+			events = new PageImpl<Event>(eventList);
+		}
+
+		return events;
 	}
-	
+
 	public Statement toXApi(OpenLRSEntity entity) {
 		Statement statement = null;
 		if (entity != null) {
 			if (isXApi(entity)) {
-				statement = (Statement)entity;
-			}
-			else if (isEvent(entity)) {
-				Event event = (Event)entity;
+				statement = (Statement) entity;
+			} else if (isEvent(entity)) {
+				Event event = (Event) entity;
 				try {
-					statement = objectMapper.readValue(event.getRaw().getBytes(), Statement.class);
-				} 
-				catch (Exception e) {
+					statement = objectMapper.readValue(event.getRaw()
+							.getBytes(), Statement.class);
+				} catch (Exception e) {
 					log.error(e.getMessage(), e);
 					throw new InvalidXApiFormatException();
-				} 
-			}
-			else {
-				throw new UnsupportedOperationException(String.format("Conversion from %s to xApi is not yet supported.", entity.getObjectKey()));
+				}
+			} else {
+				throw new UnsupportedOperationException(String.format(
+						"Conversion from %s to xApi is not yet supported.",
+						entity.getObjectKey()));
 			}
 		}
-		
+
 		return statement;
 	}
-	
+
 	public Page<Statement> toXApiPage(Page<OpenLRSEntity> page) {
 		Page<Statement> statements = null;
-    	if (page != null && page.getContent() != null && !page.getContent().isEmpty()) {
-    		List<OpenLRSEntity> entities = page.getContent();
-    		List<Statement> statementList = new ArrayList<Statement>();
-    		for (OpenLRSEntity entity : entities) {
-    			statementList.add(toXApi(entity));
-    		}
-    		
-    		statements = new PageImpl<Statement>(statementList);
-    	}
-    	
-    	return statements;
+		if (page != null && page.getContent() != null
+				&& !page.getContent().isEmpty()) {
+			List<OpenLRSEntity> entities = page.getContent();
+			List<Statement> statementList = new ArrayList<Statement>();
+			for (OpenLRSEntity entity : entities) {
+				statementList.add(toXApi(entity));
+			}
+
+			statements = new PageImpl<Statement>(statementList);
+		}
+
+		return statements;
 	}
-	
+
 	public StatementResult toXApiCollection(Collection<OpenLRSEntity> entities) {
 		StatementResult statementResult = null;
 		List<Statement> statements = null;
-		
+
 		if (entities != null && !entities.isEmpty()) {
 			statements = new ArrayList<Statement>();
-			
+
 			for (OpenLRSEntity entity : entities) {
 				statements.add(toXApi(entity));
 			}
-			
+
 			statementResult = new StatementResult(statements);
 		}
-		
-		
+
 		return statementResult;
 	}
-	
+
 	public Event fromXAPI(Statement xapi) {
-		
+
 		Event event = null;
-		
+
 		if (xapi != null) {
 			event = new Event();
-			
+
 			event.setActor(parseActorXApi(xapi));
 			event.setContext(parseContextXApi(xapi));
 			event.setEventFormatType(EventFormatType.XAPI);
-			
-			Map<String,String> object = parseObjectXApi(xapi);
+
+			Map<String, String> object = parseObjectXApi(xapi);
 			if (object != null && !object.isEmpty()) {
 				event.setObject(object.get("ID"));
 				event.setObjectType(object.get("TYPE"));
 			}
-			
-			//TODO
+
+			// TODO
 			event.setOrganization(null);
 			event.setRaw(xapi.toJSON());
 			event.setSourceId(xapi.getId());
 			event.setTimestamp(xapi.getTimestamp());
 			event.setVerb(parseVerbXApi(xapi));
 		}
-		
+
 		return event;
 	}
-	
+
 	private String parseContextXApi(Statement xapi) {
 		String context = null;
-		
+
 		XApiContext xApiContext = xapi.getContext();
 		if (xApiContext != null) {
-			XApiContextActivities xApiContextActivities = xApiContext.getContextActivities();
+			XApiContextActivities xApiContextActivities = xApiContext
+					.getContextActivities();
 			if (xApiContextActivities != null) {
-				List<XApiObject> parentContext = xApiContextActivities.getParent();
+				List<XApiObject> parentContext = xApiContextActivities
+						.getParent();
 				if (parentContext != null && !parentContext.isEmpty()) {
 					for (XApiObject object : parentContext) {
 						String id = object.getId();
@@ -195,10 +199,10 @@ public class EventConversionService {
 
 		return context;
 	}
-	
+
 	private String parseActorXApi(Statement xapi) {
 		String actor = null;
-		
+
 		XApiActor xApiActor = xapi.getActor();
 		if (xApiActor != null) {
 			String mbox = xApiActor.getMbox();
@@ -209,17 +213,17 @@ public class EventConversionService {
 
 		return actor;
 	}
-	
+
 	private String parseVerbXApi(Statement xapi) {
 		String verb = null;
-		
+
 		XApiVerb xApiVerb = xapi.getVerb();
 		if (xApiVerb != null) {
-			Map<String,String> display = xApiVerb.getDisplay();
+			Map<String, String> display = xApiVerb.getDisplay();
 			if (display != null && !display.isEmpty()) {
 				verb = display.get("en-US");
 			}
-			
+
 			if (StringUtils.isBlank(verb)) {
 				String id = xApiVerb.getId();
 				if (StringUtils.isNotBlank(id)) {
@@ -227,30 +231,33 @@ public class EventConversionService {
 				}
 			}
 		}
-		
+
 		return verb;
 	}
-	
-	private Map<String,String> parseObjectXApi(Statement xapi) {
-		Map<String,String> objectIdandType = null;
-		
+
+	private Map<String, String> parseObjectXApi(Statement xapi) {
+		Map<String, String> objectIdandType = null;
+
 		XApiObject xApiObject = xapi.getObject();
 		if (xApiObject != null) {
 			objectIdandType = new HashMap<String, String>();
-			XApiObjectDefinition xApiObjectDefinition = xApiObject.getDefinition();
+			XApiObjectDefinition xApiObjectDefinition = xApiObject
+					.getDefinition();
 			if (xApiObjectDefinition != null) {
 				String type = xApiObjectDefinition.getType();
 				if (StringUtils.isNotBlank(type)) {
-					objectIdandType.put("TYPE", StringUtils.substringAfterLast(type, "/"));
+					objectIdandType.put("TYPE",
+							StringUtils.substringAfterLast(type, "/"));
 				}
 			}
-			
+
 			String id = xApiObject.getId();
 			if (StringUtils.isNotBlank(id)) {
-				objectIdandType.put("ID", StringUtils.substringAfterLast(id, "/"));
+				objectIdandType.put("ID",
+						StringUtils.substringAfterLast(id, "/"));
 			}
 		}
-		
+
 		return objectIdandType;
 	}
 

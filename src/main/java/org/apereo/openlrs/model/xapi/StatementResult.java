@@ -19,12 +19,12 @@ import java.util.List;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 public class StatementResult {
-	
+
 	private List<Statement> statements;
-	
+
 	public StatementResult(List<Statement> statements) {
 		this.statements = statements;
 	}
@@ -33,7 +33,9 @@ public class StatementResult {
 		return statements;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

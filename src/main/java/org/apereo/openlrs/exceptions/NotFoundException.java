@@ -17,14 +17,15 @@ package org.apereo.openlrs.exceptions;
 
 /**
  * Exception indicating that a requested entity was not found.
+ * 
  * @author Gary Roybal, groybal@unicon.net
  */
-public class NotFoundException extends RuntimeException{
+public class NotFoundException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public NotFoundException(String message) {
-        super(message);
-    }
+	public NotFoundException(String message) {
+		super(message);
+	}
 
 }

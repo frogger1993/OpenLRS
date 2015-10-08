@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @JsonInclude(Include.NON_NULL)
 public class XApiScore {
@@ -28,51 +28,62 @@ public class XApiScore {
 	private Double raw;
 	private Double min;
 	private Double max;
-	
+
 	/**
 	 * @return the scaled
 	 */
 	public Double getScaled() {
 		return scaled;
 	}
+
 	/**
-	 * @param scaled the scaled to set
+	 * @param scaled
+	 *            the scaled to set
 	 */
 	public void setScaled(Double scaled) {
 		this.scaled = scaled;
 	}
+
 	/**
 	 * @return the raw
 	 */
 	public Double getRaw() {
 		return raw;
 	}
+
 	/**
-	 * @param raw the raw to set
+	 * @param raw
+	 *            the raw to set
 	 */
 	public void setRaw(Double raw) {
 		this.raw = raw;
 	}
+
 	/**
 	 * @return the min
 	 */
 	public Double getMin() {
 		return min;
 	}
+
 	/**
-	 * @param min the min to set
+	 * @param min
+	 *            the min to set
 	 */
 	public void setMin(Double min) {
 		this.min = min;
 	}
+
 	/**
 	 * @return the max
 	 */
 	public Double getMax() {
 		return max;
 	}
+
 	/**
-	 * @param max the max to set
+	 * @param max
+	 *            the max to set
 	 */
 	public void setMax(Double max) {
 		this.max = max;

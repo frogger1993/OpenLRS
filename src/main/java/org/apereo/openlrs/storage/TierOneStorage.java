@@ -22,9 +22,10 @@ import org.apereo.openlrs.model.OpenLRSEntity;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 public interface TierOneStorage<V extends OpenLRSEntity> {
 	V save(V entity);
+
 	List<V> saveAll(Collection<V> entities);
 }

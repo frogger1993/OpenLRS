@@ -17,8 +17,8 @@ package org.apereo.openlrs.model.xapi;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 public enum XApiObjectTypes {
-	Activity,Agent,Group,SubStatement,StatementRef
+	Activity, Agent, Group, SubStatement, StatementRef
 }

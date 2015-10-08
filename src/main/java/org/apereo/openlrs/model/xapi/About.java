@@ -25,21 +25,22 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * Information about the LRS
- * see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#aboutresource
+ * Information about the LRS see
+ * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#aboutresource
  * 
  * @author ggilbert (ggilbert @ unicon.net)
- *
+ * 
  */
 @JsonInclude(Include.NON_NULL)
 public class About implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
-	@NotNull private String version;
+
+	@NotNull
+	private String version;
 	private Map<URI, String> extensions;
-	
-	public About (String version) {
+
+	public About(String version) {
 		this.version = version;
 	}
 
@@ -58,7 +59,8 @@ public class About implements Serializable {
 	}
 
 	/**
-	 * @param extensions the extensions to set
+	 * @param extensions
+	 *            the extensions to set
 	 */
 	public void setExtensions(Map<URI, String> extensions) {
 		this.extensions = extensions;

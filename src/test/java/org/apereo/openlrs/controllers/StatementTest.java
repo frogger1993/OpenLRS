@@ -36,15 +36,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 /**
  * 
  * @author Robert E. Long (rlong @ unicon.net)
- *
+ * 
  */
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes=Application.class)
+@SpringApplicationConfiguration(classes = Application.class)
 public class StatementTest {
 
-    @Autowired
-    private StatementController statementController;
+	@Autowired
+	private StatementController statementController;
 	private XApiActor actor;
 	private XApiVerb verb;
 	private XApiObject object;
@@ -60,96 +60,100 @@ public class StatementTest {
 		object.setId("http://example.com/object");
 	}
 
-    @Test
-    public void getFilteredStatementTest() {
-        String actor = "actor1";
-        String activity = "activity1";
-        StatementResult response = statementController.getStatement(actor, activity, null, null, null);
-        Assert.assertNotNull(response);
-    }
+	@Test
+	public void getFilteredStatementTest() {
+		String actor = "actor1";
+		String activity = "activity1";
+		StatementResult response = statementController.getStatement(actor,
+				activity, null, null, null);
+		Assert.assertNotNull(response);
+	}
 
-    @Test
-    public void getAllStatementTest() {
-        String actor = "";
-        String activity = "";
-        StatementResult response = statementController.getStatement(actor, activity, null, null, null);
-        Assert.assertNotNull(response);
-    }
+	@Test
+	public void getAllStatementTest() {
+		String actor = "";
+		String activity = "";
+		StatementResult response = statementController.getStatement(actor,
+				activity, null, null, null);
+		Assert.assertNotNull(response);
+	}
 
-//    @Test
-//    public void postStatementTest() throws JsonParseException, JsonMappingException, IOException {
-//		Statement statement = new Statement();
-//		statement.setActor(actor);
-//		statement.setVerb(verb);
-//		statement.setObject(object);
-//        
-//        List<String> response = statementController.postStatement(statement.toJSON());
-//        Assert.assertNotNull(response);
-//    }
+	// @Test
+	// public void postStatementTest() throws JsonParseException,
+	// JsonMappingException, IOException {
+	// Statement statement = new Statement();
+	// statement.setActor(actor);
+	// statement.setVerb(verb);
+	// statement.setObject(object);
+	//
+	// List<String> response =
+	// statementController.postStatement(statement.toJSON());
+	// Assert.assertNotNull(response);
+	// }
 
-    @Test
-    public void statementJsonValidTest() {
-        String json = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"mailto:test@example.com\"}," +
-                    "\"verb\" : {\"id\":\"http://example.com/commented\",\"display\": {\"en-US\":\"commented\"}}," +
-                    "\"object\": {\"id\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
+	@Test
+	public void statementJsonValidTest() {
+		String json = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"mailto:test@example.com\"},"
+				+ "\"verb\" : {\"id\":\"http://example.com/commented\",\"display\": {\"en-US\":\"commented\"}},"
+				+ "\"object\": {\"id\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
 
-        boolean valid = StatementUtils.hasAllRequiredProperties(json);
-        Assert.assertTrue(valid);
-    }
+		boolean valid = StatementUtils.hasAllRequiredProperties(json);
+		Assert.assertTrue(valid);
+	}
 
-    @Test
-    public void statementJsonInvalidTest() {
-        String noActorJson = "{\"verb\" : {\"id\":\"http://example.com/commented\",\"display\": {\"en-US\":\"commented\"}}," +
-                    "\"object\": {\"id\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
-        String noActorIfiKeyJson = "{\"actor\" : {\"objectType\": \"Agent\",\"INVALID\":\"mailto:test@example.com\"}," +
-                "\"verb\" : {\"id\":\"http://example.com/commented\",\"display\": {\"en-US\":\"commented\"}}," +
-                "\"object\": {\"id\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
-        String noActorIfiValueJson = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"\"}," +
-                "\"verb\" : {\"id\":\"http://example.com/commented\",\"display\": {\"en-US\":\"commented\"}}," +
-                "\"object\": {\"id\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
-        String noVerbJson = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"mailto:test@example.com\"}," +
-                "\"object\": {\"id\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
-        String noVerbIdKeyJson = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"mailto:test@example.com\"}," +
-                "\"verb\" : {\"display\": {\"en-US\":\"commented\"}}," +
-                "\"object\": {\"id\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
-        String noVerbIdValueJson = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"mailto:test@example.com\"}," +
-                "\"verb\" : {\"id\":\"\",\"display\": {\"en-US\":\"commented\"}}," +
-                "\"object\": {\"id\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
-        String noObjectJson = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"mailto:test@example.com\"}," +
-                "\"verb\" : {\"id\":\"http://example.com/commented\",\"display\": {\"en-US\":\"commented\"}}}";
-        String noObjectIdKeyJson = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"mailto:test@example.com\"}," +
-                "\"verb\" : {\"id\":\"http://example.com/commented\",\"display\": {\"en-US\":\"commented\"}}," +
-                "\"object\": {\"INVALID\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
-        String noObjectIdValueJson = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"mailto:test@example.com\"}," +
-                "\"verb\" : {\"id\":\"http://example.com/commented\",\"display\": {\"en-US\":\"commented\"}}," +
-                "\"object\": {\"id\":\"\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
+	@Test
+	public void statementJsonInvalidTest() {
+		String noActorJson = "{\"verb\" : {\"id\":\"http://example.com/commented\",\"display\": {\"en-US\":\"commented\"}},"
+				+ "\"object\": {\"id\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
+		String noActorIfiKeyJson = "{\"actor\" : {\"objectType\": \"Agent\",\"INVALID\":\"mailto:test@example.com\"},"
+				+ "\"verb\" : {\"id\":\"http://example.com/commented\",\"display\": {\"en-US\":\"commented\"}},"
+				+ "\"object\": {\"id\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
+		String noActorIfiValueJson = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"\"},"
+				+ "\"verb\" : {\"id\":\"http://example.com/commented\",\"display\": {\"en-US\":\"commented\"}},"
+				+ "\"object\": {\"id\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
+		String noVerbJson = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"mailto:test@example.com\"},"
+				+ "\"object\": {\"id\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
+		String noVerbIdKeyJson = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"mailto:test@example.com\"},"
+				+ "\"verb\" : {\"display\": {\"en-US\":\"commented\"}},"
+				+ "\"object\": {\"id\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
+		String noVerbIdValueJson = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"mailto:test@example.com\"},"
+				+ "\"verb\" : {\"id\":\"\",\"display\": {\"en-US\":\"commented\"}},"
+				+ "\"object\": {\"id\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
+		String noObjectJson = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"mailto:test@example.com\"},"
+				+ "\"verb\" : {\"id\":\"http://example.com/commented\",\"display\": {\"en-US\":\"commented\"}}}";
+		String noObjectIdKeyJson = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"mailto:test@example.com\"},"
+				+ "\"verb\" : {\"id\":\"http://example.com/commented\",\"display\": {\"en-US\":\"commented\"}},"
+				+ "\"object\": {\"INVALID\":\"http://example.com/website\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
+		String noObjectIdValueJson = "{\"actor\" : {\"objectType\": \"Agent\",\"mbox\":\"mailto:test@example.com\"},"
+				+ "\"verb\" : {\"id\":\"http://example.com/commented\",\"display\": {\"en-US\":\"commented\"}},"
+				+ "\"object\": {\"id\":\"\",\"definition\": {\"name\" : {\"en-US\":\"Some Awesome Website\"}}}}";
 
-        boolean valid = StatementUtils.hasAllRequiredProperties(noActorJson);
-        Assert.assertFalse(valid);
+		boolean valid = StatementUtils.hasAllRequiredProperties(noActorJson);
+		Assert.assertFalse(valid);
 
-        valid = StatementUtils.hasAllRequiredProperties(noActorIfiKeyJson);
-        Assert.assertFalse(valid);
+		valid = StatementUtils.hasAllRequiredProperties(noActorIfiKeyJson);
+		Assert.assertFalse(valid);
 
-        valid = StatementUtils.hasAllRequiredProperties(noActorIfiValueJson);
-        Assert.assertFalse(valid);
+		valid = StatementUtils.hasAllRequiredProperties(noActorIfiValueJson);
+		Assert.assertFalse(valid);
 
-        valid = StatementUtils.hasAllRequiredProperties(noVerbJson);
-        Assert.assertFalse(valid);
+		valid = StatementUtils.hasAllRequiredProperties(noVerbJson);
+		Assert.assertFalse(valid);
 
-        valid = StatementUtils.hasAllRequiredProperties(noVerbIdKeyJson);
-        Assert.assertFalse(valid);
+		valid = StatementUtils.hasAllRequiredProperties(noVerbIdKeyJson);
+		Assert.assertFalse(valid);
 
-        valid = StatementUtils.hasAllRequiredProperties(noVerbIdValueJson);
-        Assert.assertFalse(valid);
+		valid = StatementUtils.hasAllRequiredProperties(noVerbIdValueJson);
+		Assert.assertFalse(valid);
 
-        valid = StatementUtils.hasAllRequiredProperties(noObjectJson);
-        Assert.assertFalse(valid);
+		valid = StatementUtils.hasAllRequiredProperties(noObjectJson);
+		Assert.assertFalse(valid);
 
-        valid = StatementUtils.hasAllRequiredProperties(noObjectIdKeyJson);
-        Assert.assertFalse(valid);
+		valid = StatementUtils.hasAllRequiredProperties(noObjectIdKeyJson);
+		Assert.assertFalse(valid);
 
-        valid = StatementUtils.hasAllRequiredProperties(noObjectIdValueJson);
-        Assert.assertFalse(valid);
-    }
+		valid = StatementUtils.hasAllRequiredProperties(noObjectIdValueJson);
+		Assert.assertFalse(valid);
+	}
 
 }

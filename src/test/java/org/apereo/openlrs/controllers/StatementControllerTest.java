@@ -37,26 +37,32 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * JUnit test class for {@link StatementController}.
+ * 
  * @author Gary Roybal, groybal@unicon.net
  */
 public class StatementControllerTest {
 
-	@Mock private Statement statement;
-	@Mock private XApiService xApiService;
-	@Autowired private ObjectMapper objectMapper;
-	@Autowired private Validator validator;
+	@Mock
+	private Statement statement;
+	@Mock
+	private XApiService xApiService;
+	@Autowired
+	private ObjectMapper objectMapper;
+	@Autowired
+	private Validator validator;
 
 	private String statementId;
-	private Map<String,String> allRequestParams;
+	private Map<String, String> allRequestParams;
 	private StatementController controller;
 
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		this.statementId = "12345678";
-		this.allRequestParams = new HashMap<String,String>();
+		this.allRequestParams = new HashMap<String, String>();
 		this.allRequestParams.put("statementId", this.statementId);
-		this.controller = new StatementController(this.xApiService, this.objectMapper, this.validator);
+		this.controller = new StatementController(this.xApiService,
+				this.objectMapper, this.validator);
 	}
 
 	@Test(expected = NotFoundException.class)

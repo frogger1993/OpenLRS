@@ -17,8 +17,8 @@ package org.apereo.openlrs.model.event;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 public enum EventFormatType {
- XAPI, CALIPER
+	XAPI, CALIPER
 }

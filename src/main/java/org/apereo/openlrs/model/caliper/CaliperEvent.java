@@ -24,14 +24,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 public class CaliperEvent implements OpenLRSEntity {
-	
+
 	private static final long serialVersionUID = 1L;
 	private Logger log = Logger.getLogger(CaliperEvent.class);
-	@JsonIgnore public static final String OBJECT_KEY = "CALIPEREVENT";
-
+	@JsonIgnore
+	public static final String OBJECT_KEY = "CALIPEREVENT";
 
 	@Override
 	@JsonIgnore
@@ -44,24 +44,22 @@ public class CaliperEvent implements OpenLRSEntity {
 	public String getObjectKey() {
 		return OBJECT_KEY;
 	}
-	
-    @JsonIgnore
-    public String toJSON() {
-    	ObjectMapper om = new ObjectMapper();
-    	String rawJson = null;
-    	try {
+
+	@JsonIgnore
+	public String toJSON() {
+		ObjectMapper om = new ObjectMapper();
+		String rawJson = null;
+		try {
 			rawJson = om.writer().writeValueAsString(this);
-		} 
-    	catch (JsonProcessingException e) {
-			log.error(e.getMessage(), e); 
+		} catch (JsonProcessingException e) {
+			log.error(e.getMessage(), e);
 		}
 		return rawJson;
-    }
+	}
 
-    @Override
-    public String toString() {
-        return toJSON();        
-    }
-
+	@Override
+	public String toString() {
+		return toJSON();
+	}
 
 }

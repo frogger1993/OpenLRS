@@ -32,218 +32,228 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * The statement model represents all the available properties of a learning event
- * see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#stmtprops
+ * The statement model represents all the available properties of a learning
+ * event see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#stmtprops
  * 
  * @author Robert E. Long (rlong @ unicon.net)
  */
-@Document(indexName="openlrsstatement", type="statement", refreshInterval="60s", replicas=1, shards=5)
+@Document(indexName = "openlrsstatement", type = "statement", refreshInterval = "60s", replicas = 1, shards = 5)
 @JsonInclude(Include.NON_NULL)
 public class Statement implements OpenLRSEntity {
-	
-	@Transient private Logger log = Logger.getLogger(Statement.class);
-    private static final long serialVersionUID = 1L;
-    @JsonIgnore public static final String OBJECT_KEY = "STATEMENT";
 
-    /**
-     * UUID
-     * see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#stmtid
-     * 
-     * Recommended
-     */
-    @Id private String id;
+	@Transient
+	private Logger log = Logger.getLogger(Statement.class);
+	private static final long serialVersionUID = 1L;
+	@JsonIgnore
+	public static final String OBJECT_KEY = "STATEMENT";
 
-    /**
-     * An agent (an individual) is a persona or system
-     * see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#actor
-     * 
-     * Required
-     */
-    @Field(type=FieldType.Nested)
-    @NotNull private XApiActor actor;
+	/**
+	 * UUID see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#stmtid
+	 * 
+	 * Recommended
+	 */
+	@Id
+	private String id;
 
-    /**
-     * Action between actor and activity
-     * see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#verb
-     * 
-     * Required
-     */
-    @Field(type=FieldType.Nested)
-    @NotNull private XApiVerb verb;
+	/**
+	 * An agent (an individual) is a persona or system see
+	 * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#actor
+	 * 
+	 * Required
+	 */
+	@Field(type = FieldType.Nested)
+	@NotNull
+	private XApiActor actor;
 
-    /**
-     * an Activity, Agent/Group, Sub-Statement, or Statement Reference. It is the "this" part of the Statement, i.e. "I did this"
-     * see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#object
-     * 
-     * Required
-     */
-    @Field(type=FieldType.Nested)
-    @NotNull private XApiObject object;
+	/**
+	 * Action between actor and activity see
+	 * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#verb
+	 * 
+	 * Required
+	 */
+	@Field(type = FieldType.Nested)
+	@NotNull
+	private XApiVerb verb;
 
-    /**
-     * optional field that represents a measured outcome related to the Statement in which it is included
-     * see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#result
-     * 
-     * Optional
-     */
-    @Field(type=FieldType.Nested)
-    private XApiResult result;
+	/**
+	 * an Activity, Agent/Group, Sub-Statement, or Statement Reference. It is
+	 * the "this" part of the Statement, i.e. "I did this" see
+	 * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#object
+	 * 
+	 * Required
+	 */
+	@Field(type = FieldType.Nested)
+	@NotNull
+	private XApiObject object;
 
-    /**
-     * optional field that provides a place to add contextual information to a Statement. All properties are optional
-     * see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#context
-     * 
-     * Optional
-     */
-    @Field(type=FieldType.Nested)
-    private XApiContext context;
+	/**
+	 * optional field that represents a measured outcome related to the
+	 * Statement in which it is included see
+	 * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#result
+	 * 
+	 * Optional
+	 */
+	@Field(type = FieldType.Nested)
+	private XApiResult result;
 
-    /**
-     *  time at which the experience occurred
-     *  see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#timestamp
-     *  
-     *  Optional
-     */
-    private String timestamp;
+	/**
+	 * optional field that provides a place to add contextual information to a
+	 * Statement. All properties are optional see
+	 * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#context
+	 * 
+	 * Optional
+	 */
+	@Field(type = FieldType.Nested)
+	private XApiContext context;
 
-    /**
-     * time at which a Statement is stored by the LRS
-     * see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#stored
-     * 
-     * Set by the LRS
-     */
-    private String stored;
+	/**
+	 * time at which the experience occurred see
+	 * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#timestamp
+	 * 
+	 * Optional
+	 */
+	private String timestamp;
 
-    /**
-     * provides information about whom or what has asserted that this Statement is true
-     * see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#authority
-     * 
-     * Optional
-     */
-    private XApiActor authority;
+	/**
+	 * time at which a Statement is stored by the LRS see
+	 * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#stored
+	 * 
+	 * Set by the LRS
+	 */
+	private String stored;
 
-    /**
-     * information in Statements helps systems that process data from an LRS get their bearings. Since the Statement data model 
-     * is guaranteed consistent through all 1.0.x versions, in order to support data flow among such LRSs the LRS is given some 
-     * flexibility on Statement versions that are accepted
-     * see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#version
-     * 
-     * Not recommended to be set
-     */
-    private String version;
+	/**
+	 * provides information about whom or what has asserted that this Statement
+	 * is true see
+	 * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#authority
+	 * 
+	 * Optional
+	 */
+	private XApiActor authority;
 
-    /**
-     * Object array of digital artifacts providing evidence of a learning experience
-     * see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#attachments
-     */
-    //private Object[] attachments;
+	/**
+	 * information in Statements helps systems that process data from an LRS get
+	 * their bearings. Since the Statement data model is guaranteed consistent
+	 * through all 1.0.x versions, in order to support data flow among such LRSs
+	 * the LRS is given some flexibility on Statement versions that are accepted
+	 * see https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#version
+	 * 
+	 * Not recommended to be set
+	 */
+	private String version;
 
-    public String getId() {
-        return id;
-    }
+	/**
+	 * Object array of digital artifacts providing evidence of a learning
+	 * experience see
+	 * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI.md#attachments
+	 */
+	// private Object[] attachments;
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public XApiActor getActor() {
-        return actor;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setActor(XApiActor actor) {
-        this.actor = actor;
-    }
+	public XApiActor getActor() {
+		return actor;
+	}
 
-    public XApiVerb getVerb() {
-        return verb;
-    }
+	public void setActor(XApiActor actor) {
+		this.actor = actor;
+	}
 
-    public void setVerb(XApiVerb verb) {
-        this.verb = verb;
-    }
+	public XApiVerb getVerb() {
+		return verb;
+	}
 
-    public XApiObject getObject() {
-        return object;
-    }
+	public void setVerb(XApiVerb verb) {
+		this.verb = verb;
+	}
 
-    public void setObject(XApiObject object) {
-        this.object = object;
-    }
+	public XApiObject getObject() {
+		return object;
+	}
 
-    public XApiResult getResult() {
-        return result;
-    }
+	public void setObject(XApiObject object) {
+		this.object = object;
+	}
 
-    public void setResult(XApiResult result) {
-        this.result = result;
-    }
+	public XApiResult getResult() {
+		return result;
+	}
 
-    public XApiContext getContext() {
-        return context;
-    }
+	public void setResult(XApiResult result) {
+		this.result = result;
+	}
 
-    public void setContext(XApiContext context) {
-        this.context = context;
-    }
+	public XApiContext getContext() {
+		return context;
+	}
 
-    public String getTimestamp() {
-        return timestamp;
-    }
+	public void setContext(XApiContext context) {
+		this.context = context;
+	}
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
+	public String getTimestamp() {
+		return timestamp;
+	}
 
-    public String getStored() {
-        return stored;
-    }
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	}
 
-    public void setStored(String stored) {
-        this.stored = stored;
-    }
+	public String getStored() {
+		return stored;
+	}
 
-    public XApiActor getAuthority() {
-        return authority;
-    }
+	public void setStored(String stored) {
+		this.stored = stored;
+	}
 
-    public void setAuthority(XApiActor authority) {
-        this.authority = authority;
-    }
+	public XApiActor getAuthority() {
+		return authority;
+	}
 
-    public String getVersion() {
-        return version;
-    }
+	public void setAuthority(XApiActor authority) {
+		this.authority = authority;
+	}
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+	public String getVersion() {
+		return version;
+	}
 
-//    public Object[] getAttachments() {
-//        return attachments;
-//    }
-//
-//    public void setAttachments(Object[] attachments) {
-//        this.attachments = attachments;
-//    }
+	public void setVersion(String version) {
+		this.version = version;
+	}
 
-    @JsonIgnore
-    @Override
-    public String toJSON() {
-    	ObjectMapper om = new ObjectMapper();
-    	String rawJson = null;
-    	try {
+	// public Object[] getAttachments() {
+	// return attachments;
+	// }
+	//
+	// public void setAttachments(Object[] attachments) {
+	// this.attachments = attachments;
+	// }
+
+	@JsonIgnore
+	@Override
+	public String toJSON() {
+		ObjectMapper om = new ObjectMapper();
+		String rawJson = null;
+		try {
 			rawJson = om.writer().writeValueAsString(this);
-		} 
-    	catch (JsonProcessingException e) {
-			log.error(e.getMessage(), e); 
+		} catch (JsonProcessingException e) {
+			log.error(e.getMessage(), e);
 		}
 		return rawJson;
-    }
+	}
 
-    @Override
-    public String toString() {
-        return toJSON();        
-    }
+	@Override
+	public String toString() {
+		return toJSON();
+	}
 
 	@Override
 	@JsonIgnore

@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 public class OAuthUtil {
 	public static final String CONSUMER_KEY_PARAM = "oauth_consumer_key";
@@ -28,15 +28,18 @@ public class OAuthUtil {
 	public static final String ENCODING = "UTF-8";
 	public static final String AMPERSAND = "&";
 	public static final String EQUAL = "=";
-	public static final String [] REQUIRED_OAUTH_PARAMETERS = {"oauth_consumer_key",
-		"oauth_signature_method", "oauth_signature", "oauth_timestamp", "oauth_nonce", "oauth_version"};
+	public static final String[] REQUIRED_OAUTH_PARAMETERS = {
+			"oauth_consumer_key", "oauth_signature_method", "oauth_signature",
+			"oauth_timestamp", "oauth_nonce", "oauth_version" };
 	public static final String OAUTH_POST_BODY_PARAMETER = "oauth_body_hash";
 
-	private static final Pattern AUTHORIZATION = Pattern.compile("\\s*(\\w*)\\s+(.*)");
-	private static final Pattern KEYVALUEPAIR = Pattern.compile("(\\S*)\\s*\\=\\s*\"([^\"]*)\"");
+	private static final Pattern AUTHORIZATION = Pattern
+			.compile("\\s*(\\w*)\\s+(.*)");
+	private static final Pattern KEYVALUEPAIR = Pattern
+			.compile("(\\S*)\\s*\\=\\s*\"([^\"]*)\"");
 
 	private static final Map<String, String> algorithms;
-	
+
 	static {
 		algorithms = new HashMap<String, String>();
 		algorithms.put("HMAC-SHA1", "HmacSHA1");
@@ -59,65 +62,70 @@ public class OAuthUtil {
 				}
 			}
 		}
-		
+
 		return oauthParameters;
 	}
-	
-	public static String constructAuthorizationHeader(String realm, Map<String, String> parameters) {
+
+	public static String constructAuthorizationHeader(String realm,
+			Map<String, String> parameters) {
 		StringBuilder header = new StringBuilder();
 		if (realm != null) {
-			header.append(" realm=\"").append(OAuthUtil.percentEncode(realm)).append('"');
+			header.append(" realm=\"").append(OAuthUtil.percentEncode(realm))
+					.append('"');
 		}
-		
+
 		if (parameters != null && !parameters.isEmpty()) {
 			for (String key : parameters.keySet()) {
 				if (key.startsWith("oauth_")) {
 					String value = parameters.get(key);
-					if (value == null) value = "";
-					if (header.length() > 0) header.append(",");
+					if (value == null)
+						value = "";
+					if (header.length() > 0)
+						header.append(",");
 					header.append(" ");
 					header.append(OAuthUtil.percentEncode(key)).append("=\"");
 					header.append(OAuthUtil.percentEncode(value)).append('"');
 				}
 			}
 		}
-		
+
 		return AUTH_SCHEME + header.toString();
 	}
-	
-    public static String decodePercent(String s) {
-    	try {
-    		return URLDecoder.decode(s, ENCODING);
-    		// This implements http://oauth.pbwiki.com/FlexibleDecoding
-    	} catch (java.io.UnsupportedEncodingException wow) {
-    		throw new RuntimeException(wow.getMessage(), wow);
-    	}
-    }
+
+	public static String decodePercent(String s) {
+		try {
+			return URLDecoder.decode(s, ENCODING);
+			// This implements http://oauth.pbwiki.com/FlexibleDecoding
+		} catch (java.io.UnsupportedEncodingException wow) {
+			throw new RuntimeException(wow.getMessage(), wow);
+		}
+	}
 
 	public static String percentEncode(String s) {
-        if (s == null) {
-            return "";
-        }
-        try {
-            return URLEncoder.encode(s, ENCODING)
-                    // OAuth encodes some characters differently:
-                    .replace("+", "%20").replace("*", "%2A")
-                    .replace("%7E", "~");
-        } catch (UnsupportedEncodingException uee) {
-            throw new RuntimeException(uee.getMessage(), uee);
-        }
+		if (s == null) {
+			return "";
+		}
+		try {
+			return URLEncoder.encode(s, ENCODING)
+					// OAuth encodes some characters differently:
+					.replace("+", "%20").replace("*", "%2A")
+					.replace("%7E", "~");
+		} catch (UnsupportedEncodingException uee) {
+			throw new RuntimeException(uee.getMessage(), uee);
+		}
 	}
-	
+
 	public static String generateNonce() throws Exception {
-		Random rand = SecureRandom.getInstance ("SHA1PRNG");
+		Random rand = SecureRandom.getInstance("SHA1PRNG");
 		return String.valueOf(rand.nextLong());
 	}
-	
+
 	public static final String mapToJava(String name) {
 		String algorithm = algorithms.get(name);
 		if (algorithm == null) {
-			throw new UnsupportedOperationException("Signature algorithm of " + name + " is unsupported.");
+			throw new UnsupportedOperationException("Signature algorithm of "
+					+ name + " is unsupported.");
 		}
-		return algorithm;		
+		return algorithm;
 	}
 }

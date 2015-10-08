@@ -29,11 +29,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Component
 public class XAPIHeaderFilter extends OncePerRequestFilter {
-	
+
 	@Value("${xapi.version}")
 	private String version;
 
@@ -41,16 +41,18 @@ public class XAPIHeaderFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request,
 			HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		
-		String allowedRequestHeaders = request.getHeader("Access-Control-Request-Headers");
+
+		String allowedRequestHeaders = request
+				.getHeader("Access-Control-Request-Headers");
 		String responseHeader = XApiConstants.XAPI_VERSION_HEADER;
-		
+
 		if (StringUtils.isNotBlank(allowedRequestHeaders)) {
-			if (StringUtils.contains(allowedRequestHeaders, XApiConstants.XAPI_VERSION_HEADER.toLowerCase())) {
+			if (StringUtils.contains(allowedRequestHeaders,
+					XApiConstants.XAPI_VERSION_HEADER.toLowerCase())) {
 				responseHeader = responseHeader.toLowerCase();
 			}
 		}
-		
+
 		response.addHeader(responseHeader, version);
 		filterChain.doFilter(request, response);
 	}

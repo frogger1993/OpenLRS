@@ -28,14 +28,16 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Component("RedisPubSubTierOneStorage")
 @Profile("redis")
 public class RedisPubSubTierOneStorage implements TierOneStorage<OpenLRSEntity> {
-	
-	@Autowired private String channelName;	
-	@Autowired private StringRedisTemplate redisTemplate;
+
+	@Autowired
+	private String channelName;
+	@Autowired
+	private StringRedisTemplate redisTemplate;
 
 	@Override
 	public OpenLRSEntity save(OpenLRSEntity entity) {

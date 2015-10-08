@@ -24,12 +24,16 @@ import org.springframework.stereotype.Repository;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Repository
 @Profile("elasticsearch")
-public interface ElasticSearchStatementMetadataSDRepository extends ElasticsearchRepository<StatementMetadata, String> {
+public interface ElasticSearchStatementMetadataSDRepository extends
+		ElasticsearchRepository<StatementMetadata, String> {
 	Page<StatementMetadata> findByUser(String user, Pageable pageable);
+
 	Page<StatementMetadata> findByContext(String context, Pageable pageable);
-	Page<StatementMetadata> findByUserAndContext(String user, String context, Pageable pageable);
+
+	Page<StatementMetadata> findByUserAndContext(String user, String context,
+			Pageable pageable);
 }

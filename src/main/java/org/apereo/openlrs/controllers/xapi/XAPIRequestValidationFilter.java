@@ -29,29 +29,30 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Component
 public class XAPIRequestValidationFilter extends OncePerRequestFilter {
 
 	private Logger log = Logger.getLogger(XAPIRequestValidationFilter.class);
-	
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request,
 			HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		String versionHeader = request.getHeader(XApiConstants.XAPI_VERSION_HEADER);
-		
+		String versionHeader = request
+				.getHeader(XApiConstants.XAPI_VERSION_HEADER);
+
 		if (StringUtils.isNotBlank(versionHeader)) {
 			// for now we are just checking for the header
 			// in the future we'll deal with specific versioning checking
 			filterChain.doFilter(request, response);
-		}
-		else {
+		} else {
 			log.warn("Request missing XAPI VERSION HEADER");
-			response.sendError(400, "Missing "+XApiConstants.XAPI_VERSION_HEADER+" Header");
+			response.sendError(400, "Missing "
+					+ XApiConstants.XAPI_VERSION_HEADER + " Header");
 		}
-		
+
 	}
 
 }

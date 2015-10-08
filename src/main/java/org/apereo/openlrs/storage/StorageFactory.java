@@ -25,32 +25,36 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Component
 public class StorageFactory {
 
 	@Value("${openlrs.tierOneStorage:InMemoryStorage}")
 	private String tierOneStorage;
-	@Autowired private Map<String, TierOneStorage<OpenLRSEntity>> tierOneStorageOptions;
-	
+	@Autowired
+	private Map<String, TierOneStorage<OpenLRSEntity>> tierOneStorageOptions;
+
 	@Value("${openlrs.tierTwoStorage:InMemoryStorage}")
 	private String tierTwoStorage;
-	@Autowired private Map<String, TierTwoStorage<OpenLRSEntity>> tierTwoStorageOptions;
-	
+	@Autowired
+	private Map<String, TierTwoStorage<OpenLRSEntity>> tierTwoStorageOptions;
+
 	public TierOneStorage<OpenLRSEntity> getTierOneStorage() {
 		return tierOneStorageOptions.get(tierOneStorage);
 	}
-	
-	public TierOneStorage<OpenLRSEntity> getTierOneStorage(final String tierOneStorageType) {
+
+	public TierOneStorage<OpenLRSEntity> getTierOneStorage(
+			final String tierOneStorageType) {
 		return tierOneStorageOptions.get(tierOneStorageType);
 	}
-	
+
 	public TierTwoStorage<OpenLRSEntity> getTierTwoStorage() {
 		return tierTwoStorageOptions.get(tierTwoStorage);
 	}
-	
-	public TierTwoStorage<OpenLRSEntity> getTierTwoStorage(final String tierTwoStorageType) {
+
+	public TierTwoStorage<OpenLRSEntity> getTierTwoStorage(
+			final String tierTwoStorageType) {
 		return tierTwoStorageOptions.get(tierTwoStorageType);
 	}
 

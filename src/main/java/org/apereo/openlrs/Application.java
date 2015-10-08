@@ -39,38 +39,45 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 
 @Configuration
-@EnableAutoConfiguration(exclude = {ElasticsearchAutoConfiguration.class,ElasticsearchDataAutoConfiguration.class})
-@ComponentScan(basePackages={"org.apereo.openlrs","lti"})
+@EnableAutoConfiguration(exclude = { ElasticsearchAutoConfiguration.class,
+		ElasticsearchDataAutoConfiguration.class })
+@ComponentScan(basePackages = { "org.apereo.openlrs", "lti" })
 public class Application {
-	
-	@Autowired private OpenLRSAuthenticationFilter openLRSAuthenticationFilter;
-	@Autowired private XAPIRequestValidationFilter xapiRequestValidationFilter;
-	@Autowired private CORSFilter corsFilter;
-	@Autowired private OAuthFilter oAuthFilter;
-	
+
+	@Autowired
+	private OpenLRSAuthenticationFilter openLRSAuthenticationFilter;
+	@Autowired
+	private XAPIRequestValidationFilter xapiRequestValidationFilter;
+	@Autowired
+	private CORSFilter corsFilter;
+	@Autowired
+	private OAuthFilter oAuthFilter;
+
 	public static void main(final String[] args) {
-		SpringApplication springApplication = new SpringApplication(Application.class);
-		springApplication.addListeners(new ApplicationPidFileWriter("openlrs.pid"));
+		SpringApplication springApplication = new SpringApplication(
+				Application.class);
+		springApplication.addListeners(new ApplicationPidFileWriter(
+				"openlrs.pid"));
 		springApplication.run(args);
 	}
-	
+
 	@Bean
-    @Primary
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-        return mapper;
-    }
-	
+	@Primary
+	public ObjectMapper objectMapper() {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+		return mapper;
+	}
+
 	@Bean
 	public javax.validation.Validator localValidatorFactoryBean() {
-	   return new LocalValidatorFactoryBean();
+		return new LocalValidatorFactoryBean();
 	}
-	
+
 	@Bean
 	public FilterRegistrationBean corsFilterBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean();
@@ -81,7 +88,7 @@ public class Application {
 		registrationBean.setOrder(1);
 		return registrationBean;
 	}
-	
+
 	@Bean
 	public FilterRegistrationBean securityFilterBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean();
@@ -94,7 +101,7 @@ public class Application {
 		registrationBean.setOrder(2);
 		return registrationBean;
 	}
-	
+
 	@Bean
 	public FilterRegistrationBean validationFilterBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean();
@@ -105,7 +112,7 @@ public class Application {
 		registrationBean.setOrder(3);
 		return registrationBean;
 	}
-	
+
 	@Bean
 	public FilterRegistrationBean oAuthFilterBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean();
@@ -116,5 +123,5 @@ public class Application {
 		registrationBean.setOrder(4);
 		return registrationBean;
 	}
-		
+
 }
