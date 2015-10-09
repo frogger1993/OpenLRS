@@ -21,15 +21,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Controller
 @RequestMapping("/")
 public class OpenLRSController {
-	
-	@RequestMapping(method=RequestMethod.GET, value = {"", "/"})
-    public String index() {
+
+	@RequestMapping(method = RequestMethod.GET, value = { "", "/" })
+	public String index() {
 		return "index";
-    }
+	}
 
 }

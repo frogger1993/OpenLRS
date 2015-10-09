@@ -32,72 +32,81 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @RestController
 public class ConvenienceAPIController {
-	
-	@Autowired private XApiService xapiService;
-	@Autowired private NormalizedEventService normalizedEventService;
-	
+
+	@Autowired
+	private XApiService xapiService;
+	@Autowired
+	private NormalizedEventService normalizedEventService;
+
 	public static final String XAPI = "xapi";
-	
-	@RequestMapping(value = "/api/context/{id}", method = RequestMethod.GET, 
-			produces = "application/json;charset=utf-8")
-	public Page<OpenLRSEntity> getEventsForContext(@PathVariable("id") String contextId,
-								@RequestParam(value = "page", required = false, defaultValue = "0") String page,
-								@RequestParam(value = "limit", required = false, defaultValue = "100") String limit,
-								@RequestParam(value = "format", required = false) String format) {
-		Page<OpenLRSEntity> entities = null;
-		PageRequest pageRequest = new PageRequest(Integer.parseInt(page), Integer.parseInt(limit));
 
-		if (XAPI.equalsIgnoreCase(format)) {
-			entities = (Page<OpenLRSEntity>)(Page<?>)xapiService.getByContext(contextId, pageRequest);
-		}
-		else {
-			entities = (Page<OpenLRSEntity>)(Page<?>)normalizedEventService.getByContext(contextId, pageRequest);
-		}
-		
-		return entities;
-	}
-
-	@RequestMapping(value = "/api/user/{id}", method = RequestMethod.GET, 
-			produces = "application/json;charset=utf-8")
-	public Page<OpenLRSEntity> getEventsForUser(@PathVariable("id") String userId,
+	@RequestMapping(value = "/api/context/{id}", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+	public Page<OpenLRSEntity> getEventsForContext(
+			@PathVariable("id") String contextId,
 			@RequestParam(value = "page", required = false, defaultValue = "0") String page,
 			@RequestParam(value = "limit", required = false, defaultValue = "100") String limit,
 			@RequestParam(value = "format", required = false) String format) {
-		
 		Page<OpenLRSEntity> entities = null;
-		PageRequest pageRequest = new PageRequest(Integer.parseInt(page), Integer.parseInt(limit));
+		PageRequest pageRequest = new PageRequest(Integer.parseInt(page),
+				Integer.parseInt(limit));
 
 		if (XAPI.equalsIgnoreCase(format)) {
-			entities = (Page<OpenLRSEntity>)(Page<?>)xapiService.getByUser(userId, pageRequest);
+			entities = (Page<OpenLRSEntity>) (Page<?>) xapiService
+					.getByContext(contextId, pageRequest);
+		} else {
+			entities = (Page<OpenLRSEntity>) (Page<?>) normalizedEventService
+					.getByContext(contextId, pageRequest);
 		}
-		else {
-			entities = (Page<OpenLRSEntity>)(Page<?>)normalizedEventService.getByUser(userId, pageRequest);
-		}
-		
+
 		return entities;
 	}
 
-	@RequestMapping(value = "/api/user/{userId}/context/{contextId}", method = RequestMethod.GET, 
-			produces = "application/json;charset=utf-8")
-	public Page<OpenLRSEntity> getEventsForContextAndUser(@PathVariable("contextId") String contextId, @PathVariable("userId") String userId,
+	@RequestMapping(value = "/api/user/{id}", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+	public Page<OpenLRSEntity> getEventsForUser(
+			@PathVariable("id") String userId,
 			@RequestParam(value = "page", required = false, defaultValue = "0") String page,
 			@RequestParam(value = "limit", required = false, defaultValue = "100") String limit,
 			@RequestParam(value = "format", required = false) String format) {
-		
+
 		Page<OpenLRSEntity> entities = null;
-		PageRequest pageRequest = new PageRequest(Integer.parseInt(page), Integer.parseInt(limit));
+		PageRequest pageRequest = new PageRequest(Integer.parseInt(page),
+				Integer.parseInt(limit));
 
 		if (XAPI.equalsIgnoreCase(format)) {
-			entities = (Page<OpenLRSEntity>)(Page<?>)xapiService.getByContextAndUser(contextId, userId, pageRequest);
+			entities = (Page<OpenLRSEntity>) (Page<?>) xapiService.getByUser(
+					userId, pageRequest);
+		} else {
+			entities = (Page<OpenLRSEntity>) (Page<?>) normalizedEventService
+					.getByUser(userId, pageRequest);
 		}
-		else {
-			entities = (Page<OpenLRSEntity>)(Page<?>)normalizedEventService.getByContextAndUser(contextId, userId, pageRequest);
+
+		return entities;
+	}
+
+	@RequestMapping(value = "/api/user/{userId}/context/{contextId}", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+	public Page<OpenLRSEntity> getEventsForContextAndUser(
+			@PathVariable("contextId") String contextId,
+			@PathVariable("userId") String userId,
+			@RequestParam(value = "page", required = false, defaultValue = "0") String page,
+			@RequestParam(value = "limit", required = false, defaultValue = "100") String limit,
+			@RequestParam(value = "format", required = false) String format) {
+
+		Page<OpenLRSEntity> entities = null;
+		PageRequest pageRequest = new PageRequest(Integer.parseInt(page),
+				Integer.parseInt(limit));
+
+		if (XAPI.equalsIgnoreCase(format)) {
+			entities = (Page<OpenLRSEntity>) (Page<?>) xapiService
+					.getByContextAndUser(contextId, userId, pageRequest);
+		} else {
+			entities = (Page<OpenLRSEntity>) (Page<?>) normalizedEventService
+					.getByContextAndUser(contextId, userId, pageRequest);
 		}
-		
+
 		return entities;
 	}
 

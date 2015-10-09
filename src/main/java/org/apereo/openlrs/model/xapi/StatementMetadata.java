@@ -28,20 +28,26 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * @author ggilbert
- *
+ * 
  */
-@Document(indexName="openlrsstatementmetadata", type="statement_metadata", refreshInterval="60s", replicas=1, shards=5)
+@Document(indexName = "openlrsstatementmetadata", type = "statement_metadata", refreshInterval = "60s", replicas = 1, shards = 5)
 @JsonInclude(Include.NON_NULL)
 public class StatementMetadata implements OpenLRSEntity {
 
-    private static final long serialVersionUID = 1L;
-    @JsonIgnore public static final String OBJECT_KEY = "STATEMENT_METADATA";
-    
-    @Id private String id;
-    @Field(type=FieldType.String,index=FieldIndex.not_analyzed) private String statementId;
-    @Field(type=FieldType.String,index=FieldIndex.not_analyzed) private String context;
-    @Field(type=FieldType.String,index=FieldIndex.not_analyzed) private String user;
-    @Field(type=FieldType.String,index=FieldIndex.not_analyzed) private String sor;
+	private static final long serialVersionUID = 1L;
+	@JsonIgnore
+	public static final String OBJECT_KEY = "STATEMENT_METADATA";
+
+	@Id
+	private String id;
+	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	private String statementId;
+	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	private String context;
+	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	private String user;
+	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	private String sor;
 
 	@Override
 	@JsonIgnore

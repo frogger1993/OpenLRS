@@ -3,9 +3,9 @@
  */
 package org.apereo.openlrs.exceptions.xapi;
 
-
 /**
  * Exception indicating that a received XAPI request was invalid.
+ * 
  * @author Gary Roybal, groybal@unicon.net
  */
 public class InvalidXAPIRequestException extends RuntimeException {
@@ -27,7 +27,8 @@ public class InvalidXAPIRequestException extends RuntimeException {
 		super(message, cause);
 	}
 
-	public InvalidXAPIRequestException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public InvalidXAPIRequestException(String message, Throwable cause,
+			boolean enableSuppression, boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 

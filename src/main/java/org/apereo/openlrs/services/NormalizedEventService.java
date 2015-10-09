@@ -25,25 +25,30 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Service
 public class NormalizedEventService extends EventService {
-	
-	@Autowired private EventConversionService eventConversionService;
 
-    public Page<Event> getByContext(String context, Pageable pageable) {
-    	Page<OpenLRSEntity> page = getTierTwoStorage().findByContext(context,pageable);   	
-    	return eventConversionService.toEventPage(page);
-    }
-    
-    public Page<Event> getByUser(String user, Pageable pageable) {
-    	Page<OpenLRSEntity> page = getTierTwoStorage().findByUser(user,pageable);
-    	return eventConversionService.toEventPage(page);
-    }
-    
-    public Page<Event> getByContextAndUser(String context,String user, Pageable pageable) {
-    	Page<OpenLRSEntity> page = getTierTwoStorage().findByContextAndUser(context,user,pageable);
-    	return eventConversionService.toEventPage(page);
-    }
+	@Autowired
+	private EventConversionService eventConversionService;
+
+	public Page<Event> getByContext(String context, Pageable pageable) {
+		Page<OpenLRSEntity> page = getTierTwoStorage().findByContext(context,
+				pageable);
+		return eventConversionService.toEventPage(page);
+	}
+
+	public Page<Event> getByUser(String user, Pageable pageable) {
+		Page<OpenLRSEntity> page = getTierTwoStorage().findByUser(user,
+				pageable);
+		return eventConversionService.toEventPage(page);
+	}
+
+	public Page<Event> getByContextAndUser(String context, String user,
+			Pageable pageable) {
+		Page<OpenLRSEntity> page = getTierTwoStorage().findByContextAndUser(
+				context, user, pageable);
+		return eventConversionService.toEventPage(page);
+	}
 }

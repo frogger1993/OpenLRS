@@ -22,7 +22,7 @@ import java.util.TimeZone;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 public class TimestampUtils {
 	public static String getISO8601StringForDate(Date date) {

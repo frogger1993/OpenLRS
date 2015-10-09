@@ -42,17 +42,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes=Application.class)
+@SpringApplicationConfiguration(classes = Application.class)
 public class XApiServiceTest {
-	@Autowired XApiService service;
+	@Autowired
+	XApiService service;
 	private XApiActor actor;
 	private XApiVerb verb;
 	private XApiObject object;
-	
+
 	@Before
 	public void setup() {
 		actor = new XApiActor();
@@ -63,7 +64,7 @@ public class XApiServiceTest {
 		object = new XApiObject();
 		object.setId("http://example.com/object");
 	}
-	
+
 	@Test
 	public void shouldReturnStatementId() throws Exception {
 		Statement statement = new Statement();
@@ -75,7 +76,7 @@ public class XApiServiceTest {
 		Assert.assertNotNull(statementIds);
 		Assert.assertTrue(statementIds.size() == 1);
 	}
-	
+
 	@Test
 	public void shouldReturn3StatementsWithDifferentIds() throws Exception {
 		for (int i = 0; i < 2; i++) {
@@ -85,48 +86,48 @@ public class XApiServiceTest {
 			statement.setObject(object);
 			service.post(null, statement);
 		}
-		
+
 		StatementResult result = service.get(new HashMap<String, String>());
 		Assert.assertNotNull(result);
 		Assert.assertNotNull(result.getStatements());
 		// Need to account for the statements added in other tests
 		Assert.assertTrue(result.getStatements().size() >= 3);
-		
+
 		Set<String> statementIds = new HashSet<String>();
 		for (Statement s : result.getStatements()) {
 			statementIds.add(s.getId());
 		}
 		Assert.assertTrue(statementIds.size() == result.getStatements().size());
 	}
-	
+
 	@Test
 	public void shouldReturn1Statement() throws Exception {
 		String id = UUID.randomUUID().toString();
-		
+
 		Statement statement = new Statement();
 		statement.setId(id);
 		statement.setActor(actor);
 		statement.setVerb(verb);
 		statement.setObject(object);
-		service.post(null,statement);
+		service.post(null, statement);
 
 		Statement retval = service.get(id);
 		Assert.assertNotNull(retval);
 		Assert.assertTrue(id.equals(retval.getId()));
 	}
-	
-	@Test(expected=StatementStateConflictException.class)
+
+	@Test(expected = StatementStateConflictException.class)
 	public void postStatementMethodShouldThrowExceptionIfStatementIsDuplicate() {
 		String id = UUID.randomUUID().toString();
-		
+
 		Statement statement = new Statement();
 		statement.setId(id);
 		statement.setActor(actor);
 		statement.setVerb(verb);
 		statement.setObject(object);
-		//ok
+		// ok
 		service.post(null, statement);
-		//conflict
+		// conflict
 		service.post(null, statement);
 	}
 }

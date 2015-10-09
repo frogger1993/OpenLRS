@@ -31,46 +31,48 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Component
 @Profile("redis")
 public class RedisPubSubTierTwoMessageReceiver {
-	
-	private Logger log = LoggerFactory.getLogger(RedisPubSubTierTwoMessageReceiver.class);
-	@Autowired private ObjectMapper objectMapper;
-	@Autowired private StorageFactory storageFactory;
 
-	
+	private Logger log = LoggerFactory
+			.getLogger(RedisPubSubTierTwoMessageReceiver.class);
+	@Autowired
+	private ObjectMapper objectMapper;
+	@Autowired
+	private StorageFactory storageFactory;
+
 	public void onMessage(String json) {
 		// guess at format
 		OpenLRSEntity entity = null;
-		
+
 		try {
 			entity = objectMapper.readValue(json.getBytes(), Statement.class);
+		} catch (Exception e) {
+			log.warn("unable to parse {} as xapi", json);
 		}
-		catch (Exception e) {
-			log.warn("unable to parse {} as xapi",json);
-		}
-		
+
 		if (entity == null) {
 			// try caliper
 			try {
-				entity = objectMapper.readValue(json.getBytes(), CaliperEvent.class);
-			}
-			catch (Exception e) {
-				throw new InvalidEventFormatException(String.format("unable to parse %s",json),e);
+				entity = objectMapper.readValue(json.getBytes(),
+						CaliperEvent.class);
+			} catch (Exception e) {
+				throw new InvalidEventFormatException(String.format(
+						"unable to parse %s", json), e);
 			}
 		}
-		
+
 		try {
-			TierTwoStorage<OpenLRSEntity> tierTwoStorage = storageFactory.getTierTwoStorage();
+			TierTwoStorage<OpenLRSEntity> tierTwoStorage = storageFactory
+					.getTierTwoStorage();
 			tierTwoStorage.save(entity);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
 		}
-		catch (Exception e) {
-			log.error(e.getMessage(),e);
-		}
-				
+
 	}
 
 }

@@ -36,21 +36,21 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Component
 public class OpenLRSAuthenticationFilter extends OncePerRequestFilter {
-	
+
 	private Logger log = Logger.getLogger(OpenLRSAuthenticationFilter.class);
-	
+
 	@Value("${auth.enabled}")
 	private boolean enabled;
-	
+
 	@Value("${auth.basic.username}")
 	private String username;
 	@Value("${auth.basic.password}")
 	private String password;
-	
+
 	@Value("${auth.oauth.key}")
 	private String key;
 	@Value("${auth.oauth.secret}")
@@ -60,50 +60,55 @@ public class OpenLRSAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request,
 			HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		
+
 		if (!enabled) {
 			log.warn("Authentication is disabled");
 			filterChain.doFilter(request, response);
 		}
-		
+
 		String authorizationHeader = request.getHeader("Authorization");
-		
+
 		if (log.isDebugEnabled()) {
-			log.debug(String.format("Authorization Header: %s", authorizationHeader));
+			log.debug(String.format("Authorization Header: %s",
+					authorizationHeader));
 		}
-		
+
 		if (StringUtils.isNotBlank(authorizationHeader)) {
 			if (StringUtils.containsIgnoreCase(authorizationHeader, "oauth")) {
-				authenticateOAuth(authorizationHeader, request, response, filterChain);
+				authenticateOAuth(authorizationHeader, request, response,
+						filterChain);
+			} else {
+				authenticateBasic(authorizationHeader, request, response,
+						filterChain);
 			}
-			else {
-				authenticateBasic(authorizationHeader, request, response, filterChain);
-			}
-		}
-		else if ("OPTIONS".equals(request.getMethod())) {
+		} else if ("OPTIONS".equals(request.getMethod())) {
 			log.warn("OPTIONS request - returning no content");
 			response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-		}
-		else {
+		} else {
 			unauthorized(response, "Missing Authorization Header", "None");
 		}
 	}
-	
-	private void authenticateOAuth(String authorizationHeader, HttpServletRequest request,
-			HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-		Map<String,String> oauth_parameters = OAuthUtils.decodeAuthorization(authorizationHeader);
-		if (oauth_parameters != null && oauth_parameters.containsKey("oauth_consumer_key")) {
-			final String oauth_consumer_key = oauth_parameters.get("oauth_consumer_key");
-			
+
+	private void authenticateOAuth(String authorizationHeader,
+			HttpServletRequest request, HttpServletResponse response,
+			FilterChain filterChain) throws IOException, ServletException {
+		Map<String, String> oauth_parameters = OAuthUtils
+				.decodeAuthorization(authorizationHeader);
+		if (oauth_parameters != null
+				&& oauth_parameters.containsKey("oauth_consumer_key")) {
+			final String oauth_consumer_key = oauth_parameters
+					.get("oauth_consumer_key");
+
 			// TODO
 			// replace with multi-tenant support & protocol based retry logic
 			if (oauth_consumer_key != null && oauth_consumer_key.equals(key)) {
-				
-				TreeMap<String, String> normalizedParams = new TreeMap<String, String>(oauth_parameters);
-				Map<String, String []> params = request.getParameterMap();
+
+				TreeMap<String, String> normalizedParams = new TreeMap<String, String>(
+						oauth_parameters);
+				Map<String, String[]> params = request.getParameterMap();
 				if (params != null && !params.isEmpty()) {
 					for (String key : params.keySet()) {
-						String [] values = params.get(key);
+						String[] values = params.get(key);
 						String value = null;
 						if (values != null) {
 							value = values[0];
@@ -111,67 +116,73 @@ public class OpenLRSAuthenticationFilter extends OncePerRequestFilter {
 						normalizedParams.put(key, value);
 					}
 				}
-				
-				final String signature = oauth_parameters.get("oauth_signature");
-				final String calculatedSignature = OAuthUtils.sign(secret, normalizedParams, 
-						OAuthUtils.mapToJava(oauth_parameters.get("oauth_signature_method")), request.getMethod(), request.getRequestURL().toString());
-				
+
+				final String signature = oauth_parameters
+						.get("oauth_signature");
+				final String calculatedSignature = OAuthUtils.sign(secret,
+						normalizedParams, OAuthUtils.mapToJava(oauth_parameters
+								.get("oauth_signature_method")), request
+								.getMethod(), request.getRequestURL()
+								.toString());
+
 				if (signature.equals(calculatedSignature)) {
 					filterChain.doFilter(request, response);
-				}
-				else {
+				} else {
 					unauthorized(response, "Signatures do not match", "OAuth");
 				}
-			}
-			else {
+			} else {
 				unauthorized(response, "Invalid consumer key", "OAuth");
 			}
 			// end TODO
-		}
-		else {
+		} else {
 			unauthorized(response, "Invalid authentication token", "OAuth");
 		}
 	}
-	
-	private void authenticateBasic(String authorizationHeader, HttpServletRequest request,
-			HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-		
+
+	private void authenticateBasic(String authorizationHeader,
+			HttpServletRequest request, HttpServletResponse response,
+			FilterChain filterChain) throws IOException, ServletException {
+
 		StringTokenizer st = new StringTokenizer(authorizationHeader);
 		if (st.hasMoreTokens()) {
-	        String basic = st.nextToken();
-	 
-	        if (basic.equalsIgnoreCase("Basic") || basic.equalsIgnoreCase("Base64")) {
-	        	
-	        	try {
-	        		String credentials = new String(Base64.decodeBase64(st.nextToken()), "UTF-8");
+			String basic = st.nextToken();
 
-	        		int colon = credentials.indexOf(":");
-	            
-	        		if (colon != -1) {
-	        			String _username = credentials.substring(0, colon).trim();
-	        			String _password = credentials.substring(colon + 1).trim();
-	 
-	        			if (!username.equals(_username) || !password.equals(_password)) {
-	        				unauthorized(response, "Bad credentials", "Basic");
-	        			}
-	        			else {
-	        				filterChain.doFilter(request, response);
-	        			}
-	        		} 
-	        		else {
-	        			unauthorized(response, "Invalid authentication token", "Basic");
-	        		}
-	        	} 
-	        	catch (UnsupportedEncodingException e) {
-	        		throw new Error("Couldn't retrieve authentication", e);
-	        	}
-	        }
+			if (basic.equalsIgnoreCase("Basic")
+					|| basic.equalsIgnoreCase("Base64")) {
+
+				try {
+					String credentials = new String(Base64.decodeBase64(st
+							.nextToken()), "UTF-8");
+
+					int colon = credentials.indexOf(":");
+
+					if (colon != -1) {
+						String _username = credentials.substring(0, colon)
+								.trim();
+						String _password = credentials.substring(colon + 1)
+								.trim();
+
+						if (!username.equals(_username)
+								|| !password.equals(_password)) {
+							unauthorized(response, "Bad credentials", "Basic");
+						} else {
+							filterChain.doFilter(request, response);
+						}
+					} else {
+						unauthorized(response, "Invalid authentication token",
+								"Basic");
+					}
+				} catch (UnsupportedEncodingException e) {
+					throw new Error("Couldn't retrieve authentication", e);
+				}
+			}
 		}
 	}
-	
-	private void unauthorized(HttpServletResponse response, String message, String type) throws IOException {
-		 response.setHeader("WWW-Authenticate", type + " realm=\"OpenLRS\"");
-		 response.sendError(401, message);
+
+	private void unauthorized(HttpServletResponse response, String message,
+			String type) throws IOException {
+		response.setHeader("WWW-Authenticate", type + " realm=\"OpenLRS\"");
+		response.sendError(401, message);
 	}
 
 }

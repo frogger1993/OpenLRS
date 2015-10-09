@@ -17,8 +17,8 @@ package org.apereo.openlrs.model.xapi;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 public enum XApiActorTypes {
-	Agent,Group
+	Agent, Group
 }

@@ -29,13 +29,15 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Component("NoOpTierTwoStorage")
 public class NoOpTierTwoStorage implements TierTwoStorage<OpenLRSEntity> {
 	private Logger log = Logger.getLogger(NoOpTierTwoStorage.class);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.apereo.openlrs.storage.TierTwoStorage#findById(java.lang.String)
 	 */
 	@Override
@@ -63,7 +65,8 @@ public class NoOpTierTwoStorage implements TierTwoStorage<OpenLRSEntity> {
 	}
 
 	@Override
-	public Page<OpenLRSEntity> findWithFilters(Map<String, String> filters,Pageable pageable) {
+	public Page<OpenLRSEntity> findWithFilters(Map<String, String> filters,
+			Pageable pageable) {
 		log.warn("Using NoOp Tier Two Storage");
 		return null;
 	}

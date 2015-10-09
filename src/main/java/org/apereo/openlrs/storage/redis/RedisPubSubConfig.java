@@ -28,37 +28,40 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Configuration
 @EnableAutoConfiguration
 @Profile("redis")
 public class RedisPubSubConfig {
-	
+
 	@Value("${instance.name}")
 	private String instanceName;
-		
+
 	@Bean
 	public StringRedisTemplate template(RedisConnectionFactory connectionFactory) {
 		return new StringRedisTemplate(connectionFactory);
 	}
-	
+
 	@Bean
-	RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
+	RedisMessageListenerContainer container(
+			RedisConnectionFactory connectionFactory,
 			MessageListenerAdapter listenerAdapter) {
-		
+
 		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
-		container.addMessageListener(listenerAdapter, new ChannelTopic(channelName()));
+		container.addMessageListener(listenerAdapter, new ChannelTopic(
+				channelName()));
 
 		return container;
 	}
 
 	@Bean
-	MessageListenerAdapter listenerAdapter(RedisPubSubTierTwoMessageReceiver receiver) {
+	MessageListenerAdapter listenerAdapter(
+			RedisPubSubTierTwoMessageReceiver receiver) {
 		return new MessageListenerAdapter(receiver, "onMessage");
 	}
-	
+
 	@Bean
 	public String channelName() {
 		return "events" + "-" + instanceName;

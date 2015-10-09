@@ -28,15 +28,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes=Application.class)
+@SpringApplicationConfiguration(classes = Application.class)
 public class AboutControllerTest {
-	
-	@Autowired private AboutController aboutController;
-	
+
+	@Autowired
+	private AboutController aboutController;
+
 	@Test
 	public void versionShouldBe() {
 		About about = aboutController.about();

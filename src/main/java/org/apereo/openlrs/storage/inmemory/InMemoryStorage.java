@@ -32,10 +32,11 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Component("InMemoryStorage")
-public class InMemoryStorage implements TierOneStorage<OpenLRSEntity>, TierTwoStorage<OpenLRSEntity> {
+public class InMemoryStorage implements TierOneStorage<OpenLRSEntity>,
+		TierTwoStorage<OpenLRSEntity> {
 	private Logger log = Logger.getLogger(InMemoryStorage.class);
 	private static Map<String, OpenLRSEntity> store = new HashMap<String, OpenLRSEntity>();
 
@@ -71,17 +72,18 @@ public class InMemoryStorage implements TierOneStorage<OpenLRSEntity>, TierTwoSt
 		return new ArrayList<OpenLRSEntity>(store.values());
 	}
 
-
 	@Override
 	public Page<OpenLRSEntity> findAll(Pageable pageable) {
-		return new PageImpl<OpenLRSEntity>(new ArrayList<OpenLRSEntity>(store.values()));
+		return new PageImpl<OpenLRSEntity>(new ArrayList<OpenLRSEntity>(
+				store.values()));
 	}
 
 	@Override
 	public Page<OpenLRSEntity> findWithFilters(Map<String, String> filters,
 			Pageable pageable) {
 		log.warn("InMemoryStorage does not support filters. Return all.");
-		return new PageImpl<OpenLRSEntity>(new ArrayList<OpenLRSEntity>(store.values()));
+		return new PageImpl<OpenLRSEntity>(new ArrayList<OpenLRSEntity>(
+				store.values()));
 	}
 
 	@Override
@@ -127,12 +129,14 @@ public class InMemoryStorage implements TierOneStorage<OpenLRSEntity>, TierTwoSt
 	}
 
 	@Override
-	public Page<OpenLRSEntity> findByContextAndUser(String context, String userId, Pageable pageable) {
+	public Page<OpenLRSEntity> findByContextAndUser(String context,
+			String userId, Pageable pageable) {
 		Collection<OpenLRSEntity> values = store.values();
 		if (values != null && !values.isEmpty()) {
 			List<OpenLRSEntity> filtered = null;
 			for (OpenLRSEntity entity : values) {
-				if (entity.toJSON().contains(context) && entity.toJSON().contains(userId)) {
+				if (entity.toJSON().contains(context)
+						&& entity.toJSON().contains(userId)) {
 					if (filtered == null) {
 						filtered = new ArrayList<OpenLRSEntity>();
 					}

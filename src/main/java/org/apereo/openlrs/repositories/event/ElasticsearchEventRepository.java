@@ -25,14 +25,19 @@ import org.springframework.stereotype.Repository;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Repository
 @Profile("elasticsearch")
-public interface ElasticsearchEventRepository extends ElasticsearchRepository<Event,String> {
+public interface ElasticsearchEventRepository extends
+		ElasticsearchRepository<Event, String> {
 	Event findBySourceId(String sourceId);
+
 	Page<Event> findByActor(String actor, Pageable pageable);
+
 	Page<Event> findByContext(String context, Pageable pageable);
-	Page<Event> findByActorAndContext(String actor, String context, Pageable pageable);
+
+	Page<Event> findByActorAndContext(String actor, String context,
+			Pageable pageable);
 
 }

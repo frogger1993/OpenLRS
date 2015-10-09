@@ -24,38 +24,48 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @JsonInclude(Include.NON_NULL)
 public class XApiAccount {
-	@Field(type=FieldType.String,index=FieldIndex.not_analyzed) private String homePage;
-	@Field(type=FieldType.String,index=FieldIndex.not_analyzed) private String name;
-	
+	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	private String homePage;
+	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	private String name;
+
 	/**
 	 * @return the homePage
 	 */
 	public String getHomePage() {
 		return homePage;
 	}
+
 	/**
-	 * @param homePage the homePage to set
+	 * @param homePage
+	 *            the homePage to set
 	 */
 	public void setHomePage(String homePage) {
 		this.homePage = homePage;
 	}
+
 	/**
 	 * @return the name
 	 */
 	public String getName() {
 		return name;
 	}
+
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

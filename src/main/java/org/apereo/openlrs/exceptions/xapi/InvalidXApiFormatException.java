@@ -17,7 +17,7 @@ package org.apereo.openlrs.exceptions.xapi;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 public class InvalidXApiFormatException extends RuntimeException {
 

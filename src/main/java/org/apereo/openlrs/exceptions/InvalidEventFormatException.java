@@ -17,7 +17,7 @@ package org.apereo.openlrs.exceptions;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 public class InvalidEventFormatException extends RuntimeException {
 

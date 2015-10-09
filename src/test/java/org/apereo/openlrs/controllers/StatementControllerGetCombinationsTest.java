@@ -40,28 +40,30 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes=Application.class)
-@IfProfileValue(name="include-integration-tests",values={"elasticsearch"})
+@SpringApplicationConfiguration(classes = Application.class)
+@IfProfileValue(name = "include-integration-tests", values = { "elasticsearch" })
 public class StatementControllerGetCombinationsTest {
-	
-	@Autowired private ElasticSearchStatementSpringDataRepository elasticSearchStatementSpringDataRepository;
-	@Autowired private StatementController statmentController;
-	
+
+	@Autowired
+	private ElasticSearchStatementSpringDataRepository elasticSearchStatementSpringDataRepository;
+	@Autowired
+	private StatementController statmentController;
+
 	private String statement1Id = RandomStringUtils.random(32);
 
 	@Before
-	public void before() {		
-		//set up data	
+	public void before() {
+		// set up data
 		XApiActor actor1 = new XApiActor();
-		actor1.setMbox("mailto:"+statement1Id+"@test.com");
+		actor1.setMbox("mailto:" + statement1Id + "@test.com");
 		XApiVerb verb1 = new XApiVerb();
-		verb1.setId("http://example.com/"+statement1Id);
+		verb1.setId("http://example.com/" + statement1Id);
 		verb1.setDisplay(Collections.singletonMap("en-US", "verb"));
 		XApiObject object1 = new XApiObject();
-		object1.setId("http://example.com/"+statement1Id);
+		object1.setId("http://example.com/" + statement1Id);
 		Statement statement1 = new Statement();
 		statement1.setId(statement1Id);
 		statement1.setActor(actor1);
@@ -70,7 +72,7 @@ public class StatementControllerGetCombinationsTest {
 
 		elasticSearchStatementSpringDataRepository.save(statement1);
 	}
-	
+
 	@After
 	public void after() {
 		elasticSearchStatementSpringDataRepository.delete(statement1Id);
@@ -78,13 +80,15 @@ public class StatementControllerGetCombinationsTest {
 
 	@Test
 	public void shouldReturnOneStatementWithGivenId() {
-		Statement s = statmentController.getStatement(statement1Id, new HashMap<String, String>());
+		Statement s = statmentController.getStatement(statement1Id,
+				new HashMap<String, String>());
 		Assert.assertNotNull(s);
 	}
-	
+
 	@Test
 	public void shouldReturnAtLeastOneStatement() {
-		StatementResult sr = statmentController.getStatement(null,null,null,null,null);
+		StatementResult sr = statmentController.getStatement(null, null, null,
+				null, null);
 		Assert.assertNotNull(sr);
 		List<Statement> statements = sr.getStatements();
 		Assert.assertNotNull(statements);

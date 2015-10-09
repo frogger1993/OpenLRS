@@ -26,11 +26,12 @@ import org.springframework.stereotype.Repository;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @Repository
 @Profile("elasticsearch")
 public interface ElasticSearchStatementSpringDataRepository extends
 		ElasticsearchRepository<Statement, String> {
-	Page<Statement> findByIdInOrderByTimestampDesc(Collection<String> ids, Pageable pageable);
+	Page<Statement> findByIdInOrderByTimestampDesc(Collection<String> ids,
+			Pageable pageable);
 }

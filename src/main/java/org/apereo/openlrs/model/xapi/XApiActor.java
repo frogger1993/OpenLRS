@@ -9,38 +9,41 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-
 /**
  * Holds a representation of a statement actor
- *
+ * 
  * @author Robert E. Long (rlong @ unicon.net)
  */
 @JsonInclude(Include.NON_NULL)
 public class XApiActor {
 
-    private XApiActorTypes objectType;
-    
-    @Field(type=FieldType.String) private String mbox;
-    
-    private String name;
-    
-    @Field(type=FieldType.String,index=FieldIndex.not_analyzed) private String mbox_sha1sum;
-    @Field(type=FieldType.String,index=FieldIndex.not_analyzed) private String openid;
-    
-    @Field(type=FieldType.Nested)
-    private XApiAccount account;
-    
-    private List<XApiActor> member;
- 
-    public XApiActor() {}
-    
-    public XApiActorTypes getObjectType() {
-        return objectType;
-    }
+	private XApiActorTypes objectType;
 
-    public void setObjectType(XApiActorTypes objectType) {
-        this.objectType = objectType;
-    }
+	@Field(type = FieldType.String)
+	private String mbox;
+
+	private String name;
+
+	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	private String mbox_sha1sum;
+	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	private String openid;
+
+	@Field(type = FieldType.Nested)
+	private XApiAccount account;
+
+	private List<XApiActor> member;
+
+	public XApiActor() {
+	}
+
+	public XApiActorTypes getObjectType() {
+		return objectType;
+	}
+
+	public void setObjectType(XApiActorTypes objectType) {
+		this.objectType = objectType;
+	}
 
 	/**
 	 * @return the mbox
@@ -50,7 +53,8 @@ public class XApiActor {
 	}
 
 	/**
-	 * @param mbox the mbox to set
+	 * @param mbox
+	 *            the mbox to set
 	 */
 	public void setMbox(String mbox) {
 		this.mbox = mbox;
@@ -64,7 +68,8 @@ public class XApiActor {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -78,7 +83,8 @@ public class XApiActor {
 	}
 
 	/**
-	 * @param mbox_sha1sum the mbox_sha1sum to set
+	 * @param mbox_sha1sum
+	 *            the mbox_sha1sum to set
 	 */
 	public void setMbox_sha1sum(String mbox_sha1sum) {
 		this.mbox_sha1sum = mbox_sha1sum;
@@ -92,7 +98,8 @@ public class XApiActor {
 	}
 
 	/**
-	 * @param openid the openid to set
+	 * @param openid
+	 *            the openid to set
 	 */
 	public void setOpenid(String openid) {
 		this.openid = openid;
@@ -106,13 +113,16 @@ public class XApiActor {
 	}
 
 	/**
-	 * @param account the account to set
+	 * @param account
+	 *            the account to set
 	 */
 	public void setAccount(XApiAccount account) {
 		this.account = account;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -130,7 +140,8 @@ public class XApiActor {
 	}
 
 	/**
-	 * @param member the member to set
+	 * @param member
+	 *            the member to set
 	 */
 	public void setMember(List<XApiActor> member) {
 		this.member = member;

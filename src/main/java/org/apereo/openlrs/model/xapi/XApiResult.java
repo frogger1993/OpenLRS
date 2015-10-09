@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * @author ggilbert
- *
+ * 
  */
 @JsonInclude(Include.NON_NULL)
 public class XApiResult {
@@ -33,75 +33,92 @@ public class XApiResult {
 	private String duration;
 	private XApiScore score;
 	private Map<URI, Object> extensions;
-	
+
 	/**
 	 * @return the success
 	 */
 	public boolean isSuccess() {
 		return success;
 	}
+
 	/**
-	 * @param success the success to set
+	 * @param success
+	 *            the success to set
 	 */
 	public void setSuccess(boolean success) {
 		this.success = success;
 	}
+
 	/**
 	 * @return the completion
 	 */
 	public boolean isCompletion() {
 		return completion;
 	}
+
 	/**
-	 * @param completion the completion to set
+	 * @param completion
+	 *            the completion to set
 	 */
 	public void setCompletion(boolean completion) {
 		this.completion = completion;
 	}
+
 	/**
 	 * @return the response
 	 */
 	public String getResponse() {
 		return response;
 	}
+
 	/**
-	 * @param response the response to set
+	 * @param response
+	 *            the response to set
 	 */
 	public void setResponse(String response) {
 		this.response = response;
 	}
+
 	/**
 	 * @return the duration
 	 */
 	public String getDuration() {
 		return duration;
 	}
+
 	/**
-	 * @param duration the duration to set
+	 * @param duration
+	 *            the duration to set
 	 */
 	public void setDuration(String duration) {
 		this.duration = duration;
 	}
+
 	/**
 	 * @return the score
 	 */
 	public XApiScore getScore() {
 		return score;
 	}
+
 	/**
-	 * @param score the score to set
+	 * @param score
+	 *            the score to set
 	 */
 	public void setScore(XApiScore score) {
 		this.score = score;
 	}
+
 	/**
 	 * @return the extensions
 	 */
 	public Map<URI, Object> getExtensions() {
 		return extensions;
 	}
+
 	/**
-	 * @param extensions the extensions to set
+	 * @param extensions
+	 *            the extensions to set
 	 */
 	public void setExtensions(Map<URI, Object> extensions) {
 		this.extensions = extensions;
